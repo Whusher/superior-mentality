@@ -1,15 +1,12 @@
 import { useState } from "react";
 import { Menu } from "../utils/SVGExporter";
+import { Link } from "react-router-dom";
 
-export default function DropDownMenu({options }) {
+export default function DropDownMenu({options}) {
   const [isOpen, setIsOpen] = useState(false); // Estado para abrir/cerrar el menú
 
   const toggleDropdown = () => {
     setIsOpen(!isOpen); // Cambia el estado para abrir/cerrar
-  };
-
-  const handleOptionClick = () => {
-    setIsOpen(false); // Cierra el menú después de seleccionar
   };
 
   return (
@@ -28,10 +25,11 @@ export default function DropDownMenu({options }) {
           {options.map((option, index) => (
             <li
               key={index}
-              onClick={() => handleOptionClick(option)}
               className="px-4 py-2 hover:bg-minimal"
             >
-              {option}
+              <Link to={option.pageRef} className="flex">
+                    <span className="mx-2">{option.menuOption}</span>{option.icon()}
+              </Link>
             </li>
           ))}
         </ul>

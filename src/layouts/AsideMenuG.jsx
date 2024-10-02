@@ -22,7 +22,7 @@ export default function AsideMenuG({options = [ {icon: HandClick, menuOption: "S
           }
         </ul>
         <div className="md:hidden">
-          <DropDownMenu options={options} title={"Menu"}/>
+          <DropDownMenu options={[ {icon: HandClick, menuOption: "Suscribe", pageRef:"/suscription" },{icon: User, menuOption: "Login" , pageRef:"/login" } , {icon: News, menuOption: "News", pageRef:"/news" }]} title={"Menu"}/>
         </div>
     </aside>
   )
