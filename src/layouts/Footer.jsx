@@ -1,8 +1,8 @@
 import { Facebook, Twitter, Instagram, Mail } from '../utils/SVGExporter'
 
-export default function Footer() {
+export default function Footer({main=true}) {
   return (
-    <footer className="bg-[#1D2C40] text-[#BDD9F2] py-8 col-span-full">
+    <footer className={`bg-[#1D2C40] text-[#BDD9F2] py-8 ${main?'col-span-full': 'col-span-8 col-start-3'}`}>
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="md:col-span-2">

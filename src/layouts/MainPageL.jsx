@@ -24,7 +24,7 @@ export default function MainPageL() {
               onInit={(typewriter) => {
                 typewriter
                   .typeString("<span>Welcome to your adventure")
-                  .pauseFor(3000)
+                  .pauseFor(1500)
                   .deleteAll()
                   .typeString("TDAH with the easiest way to perform your daily activities!")
                   .start();

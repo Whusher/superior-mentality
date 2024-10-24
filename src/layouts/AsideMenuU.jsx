@@ -1,7 +1,27 @@
-export default function AsideMenuU() {
+import DropDownMenu from "./DropDownMenu"
+import { News,HandClick,User,Brainly } from "../utils/SVGExporter"
+import { Link } from "react-router-dom"
+export default function AsideMenuU({options = [ {icon: HandClick, menuOption: "Suscribe", pageRef:"/suscription" },{icon: User, menuOption: "Login" , pageRef:"/login" } , {icon: News, menuOption: "News", pageRef:"/news" }]}) {
   return (
-    <div>
-      
-    </div>
+    <aside className="col-span-2 bg-darker-light h-screen p-5 flex justify-between md:block overflow-y-auto sticky top-0"> 
+        <h3 className="text-minimal text-center text-2xl md:my-5">Superior Mentality {Brainly()}</h3>
+        <ul className="hidden md:block">
+          {
+            options.map((option, index)=>{
+              return (
+                <li key={index} 
+                  className="cursor-pointer m-3 p-3 text-white font-semibold font-sans text-lg rounded-xl hover:bg-plus-min flex justify-center items-center">
+                  <Link to={option.pageRef} className="flex">
+                    <span className="mx-2">{option.menuOption}</span>{option.icon()}
+                  </Link>
+                </li>
+              )
+            })
+          }
+        </ul>
+        <div className="md:hidden">
+          <DropDownMenu options={[ {icon: HandClick, menuOption: "Suscribe", pageRef:"/suscription" },{icon: User, menuOption: "Login" , pageRef:"/login" } , {icon: News, menuOption: "News", pageRef:"/news" }]} title={"Menu"}/>
+        </div>
+    </aside>
   )
 }

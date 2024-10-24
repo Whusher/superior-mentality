@@ -11,6 +11,10 @@ import Error404 from './pages/Error404.jsx'
 import Login from './pages/Login.jsx'
 import SignUp from './pages/SignUp.jsx'
 
+//Pages test
+import Schedule from './user/Schedule.jsx'
+
+
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter basename='/'>
@@ -18,6 +22,7 @@ createRoot(document.getElementById('root')).render(
         <Route path="/" element={<MainPageL/>} />
         <Route path="/login" element={<Login/>} />
         <Route path="/signup" element={<SignUp/>} />
+        <Route path="/schedule" element={<Schedule/>} />
         {/**ERROR 404 handler */}
         <Route path="*" element={<Error404/>} />
       </Routes>
