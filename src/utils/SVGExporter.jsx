@@ -168,7 +168,7 @@ export const CheckIcon = () => {
       strokeWidth={2}
       strokeLinecap="round"
       strokeLinejoin="round"
-      className="icon icon-tabler icons-tabler-outline icon-tabler-circle-dashed-check"
+      className="icon icon-tabler icons-tabler-outline icon-tabler-circle-dashed-check text-green-500"
     >
       <path stroke="none" d="M0 0h24v24H0z" fill="none" />
       <path d="M8.56 3.69a9 9 0 0 0 -2.92 1.95" />

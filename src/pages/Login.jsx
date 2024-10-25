@@ -1,8 +1,42 @@
 import { useState } from 'react'
 import { EyeIcon, EyeOffIcon } from '../utils/SVGExporter'
-import { Link } from 'react-router-dom'
-
+import { Link, useNavigate } from 'react-router-dom'
+import { AuthEndpoint } from '../utils/EndpointExporter'
+import { useAuth } from '../context/AuthContext'
 export default function Login() {
+  const {setIsAuthenticated} = useAuth();
+  const [formLogin, setFormLogin] = useState({
+    email: '',
+    password: ''
+  })
+  const navigate = useNavigate();
+  const handleChange = (e)=>{
+    setFormLogin({...formLogin, [e.target.name]: e.target.value})
+  }
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {  
+        const res = await fetch(`${AuthEndpoint}/sign-in`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formLogin)
+        });
+
+        if (res.ok) {
+            const data = await res.json();
+            console.log(data);
+            setIsAuthenticated(true); // Actualiza isAuthenticated a true
+            navigate('/schedule');
+        } else {
+            alert('Login failed');
+        }
+    } catch (e) {
+        console.log(e);
+        alert('Login failed');
+    }
+};
   const [showPassword, setShowPassword] = useState(false)
 
   const togglePasswordVisibility = () => setShowPassword(!showPassword)
@@ -20,6 +54,7 @@ export default function Login() {
               type="email"
               id="email"
               name="email"
+              onChange={handleChange}
               required
               className="mt-1 block w-full px-3 py-2 bg-[#BDD9F2] border border-[#8BADD9] rounded-md text-[#1D2C40] placeholder-[#6581A6] focus:outline-none focus:ring-2 focus:ring-[#3D5473]"
               placeholder="you@example.com"
@@ -34,6 +69,7 @@ export default function Login() {
                 type={showPassword ? "text" : "password"}
                 id="password"
                 name="password"
+                onChange={handleChange}
                 required
                 className="block w-full px-3 py-2 bg-[#BDD9F2] border border-[#8BADD9] rounded-md text-[#1D2C40] placeholder-[#6581A6] focus:outline-none focus:ring-2 focus:ring-[#3D5473]"
                 placeholder="Enter your password"
@@ -55,13 +91,13 @@ export default function Login() {
             </div>
           </div>
           <div>
-            <Link
-              to={'/schedule'}
+            <button
+              onClick={handleSubmit}
               type="submit"
               className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#3D5473] hover:bg-[#1D2C40] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#6581A6]"
             >
               Sign in
-            </Link>
+            </button>
           </div>
         </form>
         <div className="mt-4 text-center">

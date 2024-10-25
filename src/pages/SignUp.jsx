@@ -1,10 +1,14 @@
 import { useState } from 'react'
 import { EyeIcon, EyeOffIcon, CheckIcon, XIcon } from "../utils/SVGExporter"
+import { useNavigate } from 'react-router-dom'
+import { AuthEndpoint } from '../utils/EndpointExporter';
 
 export default function SignUp() {
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false)
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
+  const [form, setForm] = useState({name: '', lastName: '', email: '', password: ''});
 
   const togglePasswordVisibility = () => setShowPassword(!showPassword)
 
@@ -18,6 +22,7 @@ export default function SignUp() {
     const strength = [minLength, hasUppercase, hasLowercase, hasNumber, hasSpecialChar].filter(Boolean).length
     return strength
   }
+
 
   const renderPasswordStrength = () => {
     const strength = passwordStrength(password)
@@ -34,6 +39,31 @@ export default function SignUp() {
     )
   }
 
+  const handleChange = (e)=>{
+    setForm({...form, [e.target.name]: e.target.value})
+  }
+  const handleSubmit = async(e)=>{
+    e.preventDefault();
+    try{
+      const res = await fetch(`${AuthEndpoint}/sign-up`,{
+        method: 'POST',
+        headers: {
+          'Content-Type':'application/json'
+        },
+        body: JSON.stringify(form)
+      })
+      if(res.ok){
+        alert('Registred Successfully');
+        navigate('/login');
+      }else{
+        alert('An error has been ocurred')
+      }
+    }catch(e){
+      alert('Error couldtn register you check your credentials')
+      console.log(e)
+    }
+  }
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#BDD9F2]">
       <div className="bg-white p-8 rounded-lg shadow-md w-96">
@@ -41,15 +71,30 @@ export default function SignUp() {
         <form className="space-y-4">
           <div>
             <label htmlFor="name" className="block text-sm font-medium text-[#3D5473]">
-              Full Name
+              Name
             </label>
             <input
               type="text"
               id="name"
               name="name"
+              onChange={handleChange}
               required
               className="mt-1 block w-full px-3 py-2 bg-[#BDD9F2] border border-[#8BADD9] rounded-md text-[#1D2C40] placeholder-[#6581A6] focus:outline-none focus:ring-2 focus:ring-[#3D5473]"
-              placeholder="John Doe"
+              placeholder="Put your name.."
+            />
+          </div>
+          <div>
+            <label htmlFor="name" className="block text-sm font-medium text-[#3D5473]">
+              Last Name
+            </label>
+            <input
+              type="text"
+              id="lastName"
+              name="lastName"
+              onChange={handleChange}
+              required
+              className="mt-1 block w-full px-3 py-2 bg-[#BDD9F2] border border-[#8BADD9] rounded-md text-[#1D2C40] placeholder-[#6581A6] focus:outline-none focus:ring-2 focus:ring-[#3D5473]"
+              placeholder="Put your lastname"
             />
           </div>
           <div>
@@ -60,6 +105,7 @@ export default function SignUp() {
               type="email"
               id="email"
               name="email"
+              onChange={handleChange}
               required
               className="mt-1 block w-full px-3 py-2 bg-[#BDD9F2] border border-[#8BADD9] rounded-md text-[#1D2C40] placeholder-[#6581A6] focus:outline-none focus:ring-2 focus:ring-[#3D5473]"
               placeholder="you@example.com"
@@ -78,7 +124,11 @@ export default function SignUp() {
                 className="block w-full px-3 py-2 bg-[#BDD9F2] border border-[#8BADD9] rounded-md text-[#1D2C40] placeholder-[#6581A6] focus:outline-none focus:ring-2 focus:ring-[#3D5473]"
                 placeholder="Enter your password"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) =>{
+                  setPassword(e.target.value)
+                  setForm({...form, [e.target.name]: e.target.value})
+                }
+                }
               />
               <button
                 type="button"
@@ -126,6 +176,8 @@ export default function SignUp() {
           <div>
             <button
               type="submit"
+              onClick={handleSubmit}
+              disabled={password!==confirmPassword}
               className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#3D5473] hover:bg-[#1D2C40] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#6581A6]"
             >
               Sign Up

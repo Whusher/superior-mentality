@@ -1,31 +1,40 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
+// index.js
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom';
+import './index.css';
 
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
-// import App from './App.jsx'
-import './index.css'
+//AuthProvider y el hook useAuth
+import {AuthProvider, useAuth} from './context/AuthContext'
 
-//Layouts to preview
-import MainPageL from './layouts/MainPageL.jsx'
-import Error404 from './pages/Error404.jsx'
-import Login from './pages/Login.jsx'
-import SignUp from './pages/SignUp.jsx'
+// Layouts y páginas
+import MainPageL from './layouts/MainPageL';
+import Error404 from './pages/Error404';
+import Login from './pages/Login';
+import SignUp from './pages/SignUp';
+import Schedule from './user/Schedule';
 
-//Pages test
-import Schedule from './user/Schedule.jsx'
-
+// Componente para rutas protegidas
+function ProtectedRoute({ element }) {
+    const { isAuthenticated } = useAuth();
+    return isAuthenticated ? element : <Navigate to="/login" />;
+}
 
 createRoot(document.getElementById('root')).render(
-  <StrictMode>
-    <BrowserRouter basename='/'>
-      <Routes>
-        <Route path="/" element={<MainPageL/>} />
-        <Route path="/login" element={<Login/>} />
-        <Route path="/signup" element={<SignUp/>} />
-        <Route path="/schedule" element={<Schedule/>} />
-        {/**ERROR 404 handler */}
-        <Route path="*" element={<Error404/>} />
-      </Routes>
-    </BrowserRouter>
-  </StrictMode>,
-)
+    <StrictMode>
+        <AuthProvider>
+            <BrowserRouter basename="/">
+                <Routes>
+                    {/* Public Access */}
+                    <Route path="/" element={<MainPageL />} />
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/signup" element={<SignUp />} />
+                    {/* ERROR 404 handler */}
+                    <Route path="*" element={<Error404 />} />
+                    {/* Protected Route */}
+                    <Route path="/schedule" element={<ProtectedRoute element={<Schedule />} />} />
+                </Routes>
+            </BrowserRouter>
+        </AuthProvider>
+    </StrictMode>
+);
