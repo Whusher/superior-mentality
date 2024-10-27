@@ -11,12 +11,10 @@ export default function AsideMenuG({options = [ {icon: HandClick, menuOption: "S
           {
             options.map((option, index)=>{
               return (
-                <li key={index} 
-                  className="cursor-pointer m-3 p-3 text-white font-semibold font-sans text-lg rounded-xl hover:bg-plus-min flex justify-center items-center">
-                  <Link to={option.pageRef} className="flex">
+                <Link key={index} to={option.pageRef}
+                  className="cursor-pointer m-4 p-3 text-white font-semibold font-sans text-lg rounded-xl hover:bg-plus-min flex justify-center items-center">
                     <span className="mx-2">{option.menuOption}</span>{option.icon()}
-                  </Link>
-                </li>
+                </Link>
               )
             })
           }

@@ -1,10 +1,9 @@
 import { useState } from 'react'
 import { EyeIcon, EyeOffIcon } from '../utils/SVGExporter'
 import { Link, useNavigate } from 'react-router-dom'
-import { AuthEndpoint } from '../utils/EndpointExporter'
 import { useAuth } from '../context/AuthContext'
 export default function Login() {
-  const {setIsAuthenticated} = useAuth();
+  const {signIn} = useAuth();
   const [formLogin, setFormLogin] = useState({
     email: '',
     password: ''
@@ -16,21 +15,11 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {  
-        const res = await fetch(`${AuthEndpoint}/sign-in`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(formLogin)
-        });
-
-        if (res.ok) {
-            const data = await res.json();
-            console.log(data);
-            setIsAuthenticated(true); // Actualiza isAuthenticated a true
-            navigate('/schedule');
-        } else {
-            alert('Login failed');
+        const res = await signIn(formLogin);
+        if(res){
+          navigate('/schedule')
+        }else{
+          alert('ERROR LOGIN FAILED')
         }
     } catch (e) {
         console.log(e);
