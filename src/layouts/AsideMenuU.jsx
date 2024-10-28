@@ -1,21 +1,25 @@
 import DropDownMenu from "./DropDownMenu";
-import { News, HandClick, User, Brainly,XIcon } from "../utils/SVGExporter";
+import { News, User, Brainly,XIcon,History, Games, Records, Suscription } from "../utils/SVGExporter";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 const menuOps = [
-  { icon: HandClick, menuOption: "Games", pageRef: "/games" },
+  { icon: Games, menuOption: "Games", pageRef: "/games" },
   { icon: News, menuOption: "Schedule", pageRef: "/schedule" },
   { icon: User, menuOption: "Profile", pageRef: "/profile" },
+  { icon: Records, menuOption: "Records", pageRef: "/profile" },
+  { icon: History, menuOption: "History", pageRef: "/History" },
+  { icon: Suscription, menuOption: "Suscription", pageRef: "/profile" },
 ];
 
 export default function AsideMenuU({ options = menuOps }) {
-  const { signOut } = useAuth();
+  const { signOut, state } = useAuth();
   const navigate = useNavigate();
   return (
-    <aside className="col-span-2 bg-darker-light h-screen p-5 flex justify-between md:block overflow-y-auto sticky top-0">
+    <aside className="col-span-2 bg-darker-light md:h-screen p-5 flex justify-between md:block md:overflow-y-auto md:sticky top-0">
       <h3 className="text-minimal text-center text-2xl md:my-5">
         Superior Mentality {Brainly()}
+        <p className="text-lg mt-5"> Welcome {state.nameUser}</p>
       </h3>
       <ul className="hidden md:block">
         {options.map((option, index) => {
@@ -30,16 +34,16 @@ export default function AsideMenuU({ options = menuOps }) {
             </Link>
           );
         })}
-        <button
+        <li
           className="cursor-pointer mx-auto p-3 text-red-600 font-semibold font-sans text-lg w-full rounded-xl hover:bg-plus-min flex justify-center items-center"
           onClick={async () => {
             await signOut();
             navigate("/");
           }}
         >
-          <span className="mx-2">Logout</span>
+          <span className="mx-2 text-white">Logout</span>
           {XIcon()}
-        </button>
+        </li>
       </ul>
       <div className="md:hidden">
         <DropDownMenu
