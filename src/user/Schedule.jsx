@@ -6,9 +6,11 @@ function Schedule() {
   const [selectedDate, setSelectedDate] = useState(null);
   const [recording, setRecording] = useState(false);
   const [audioBlob, setAudioBlob] = useState(null);
+  const [activity, setActivity] = useState('')
   const [audioURL, setAudioURL] = useState(null);
+  const [activityTime, setActivityTime] = useState("12:00"); // Hora por defecto
 
-  const daysOfWeek = [ "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb","Dom"];
+  const daysOfWeek = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"];
 
   const handleRecording = async () => {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -87,41 +89,63 @@ function Schedule() {
                 {Stop()}
               </button>
             )}
-           
+
             {audioURL || recording ? (
               <div>
                 <audio controls src={audioURL} />
               </div>
-              ):(
-                 <input
+            ) : (
+              <input
                 type="text"
                 className="border border-gray-300 p-2 w-full rounded-md min-w-[400px]"
-                placeholder="Nueva actividad..."
-            />
-              )
-            }
+                placeholder="New Task..."
+                value={activity}
+                onChange={e => setActivity(e.target.value)}
+              />
+            )}
             <div className="flex items-center justify-center m-10 space-x-3 text-white">
               <label htmlFor="priority">Priority</label>
-              <select
-                className={`rounded-lg p-2 my-auto text-black`}
-              >
+              <select className={`rounded-lg p-2 my-auto text-black`}>
                 <option className="bg-red-500">High</option>
                 <option className="bg-yellow-500">Medium</option>
                 <option className="bg-green-500">Low</option>
               </select>
-
             </div>
+
+            <input
+              type="time"
+              className="border border-gray-300 p-2 rounded-md"
+              value={activityTime} // Estado para manejar la hora
+              onChange={(e) => setActivityTime(e.target.value)} // Manejar el cambio
+            />
             <button className="bg-dark text-white px-4 py-2 rounded-md ml-2 hover:bg-green-500/90 transition-colors">
               Add
             </button>
+            {
+              activity || audioURL ? (
+
+            <button className="bg-red-500 rounded-md text-white p-2 mx-2"
+              onClick={()=>{ //Restart all items
+                setActivity('')
+                setAudioURL(null)
+                setActivityTime("12:00")
+              }}
+            >
+              Cancel
+            </button>
+              ) : <></>
+            }
           </div>
           <button className="bg-red-500 m-5 text-white rounded-2xl w-1/2 mx-auto p-2">
             Finish day
           </button>
         </div>
       )}
-      <p className="font-medium text-gray-600 font-sans"
-      >Note: If you dont close the day will be closed automatically at 12:00am and the completition of your activities will be calculated with the data available at the moment ;)</p>
+      <p className="font-medium text-gray-600 font-sans">
+        Note: If you dont close the day will be closed automatically at 12:00am
+        and the completition of your activities will be calculated with the data
+        available at the moment ;)
+      </p>
     </div>
   );
 }
