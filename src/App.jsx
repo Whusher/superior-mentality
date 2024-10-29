@@ -10,6 +10,7 @@ import Error404 from "./pages/Error404";
 import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
 import Schedule from "./user/Schedule";
+import ActividadesList from ".user/actividades/ActividadesList"
 
 function App() {
   const { state } = useAuth();
@@ -26,6 +27,12 @@ function App() {
         {state.emailUser && (
           <>
             <Route path="/schedule" element={<Schedule />} />
+            <Route path="/actividades/Actividades" element={<ActividadesList />} />
+            <Route path="/actividades/ColorSequence" element={<ColorSequence />} />
+            <Route path="/actividades/DrawingGame" element={<DrawingGame />} />
+            <Route path="/actividades/FruitCatcher" element={<FruitCatcher />} />
+            <Route path="/actividades/MemoryGame" element={<MemoryGame />} />
+            <Route path="/actividades/SimonSays" element={<SimonSays />} />
           </>
         )}
       </Routes>
