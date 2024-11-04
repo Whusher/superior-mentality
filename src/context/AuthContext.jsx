@@ -1,120 +1,158 @@
-import React, { createContext, useReducer, useMemo, useEffect } from "react";
-import { AuthEndpoint, ResetEndpoint } from "../utils/EndpointExporter";
-
+// src/context/AuthContext.jsx
+import { createContext, useContext, useReducer, useEffect } from 'react';
+import {AuthEndpoint} from '../utils/EndpointExporter'
 const AuthContext = createContext();
-export const useAuth = () => React.useContext(AuthContext);
 
-export const AuthProvider = ({ children }) => {
-  const [state, dispatch] = useReducer(
-    (prevState, action) => {
-      switch (action.type) {
-        case "SIGN_IN":
-          return {
-            ...prevState,
-            userToken: action.token,
-            isSignOut: false,
-            nameUser: action.name,
-            emailUser: action.email,
-          };
-        case "SIGN_OUT":
-          return {
-            ...prevState,
-            userToken: null,
-            emailUser: null,
-            nameUser: null,
-            isSignOut: true,
-          };
-        case "RESTORE_TOKEN":
-          return {
-            ...prevState,
-            userToken: action.token,
-            isLoading: false,
-          };
-        default:
-          return prevState;
-      }
-    },
-    {
-      userToken: null,
-      nameUser: null,
-      emailUser: null,
-      isSignOut: false,
-      isLoading: true,
-    }
-  );
+const initialState = {
+  user: null,
+  isAuthenticated: false,
+  isLoading: true,
+  error: null
+};
 
-  const signIn = async (loginData) => {
-    try {
-      const response = await fetch(`${AuthEndpoint}/sign-in`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(loginData),
-      });
-      if (response.ok) {
-        const data = await response.json();
-        localStorage.setItem("userToken", true);
-        localStorage.setItem("userName", data.name);
-        localStorage.setItem("userEmail", data.email);
-        dispatch({
-          type: "SIGN_IN",
-          token: true,
-          email: data.email,
-          name: data.name,
-        });
-        return true;
-      } else {
-        return false;
-      }
-    } catch (error) {
-      console.error("Fetch error:", error);
-      return false;
-    }
-  };
+function authReducer(state, action) {
+  switch (action.type) {
+    case 'AUTH_LOADING':
+      return { ...state, isLoading: true, error: null };
+    case 'AUTH_SUCCESS':
+      return {
+        ...state,
+        isLoading: false,
+        isAuthenticated: true,
+        user: action.payload,
+        error: null
+      };
+    case 'AUTH_FAILURE':
+      return {
+        ...state,
+        isLoading: false,
+        isAuthenticated: false,
+        user: null,
+        error: action.payload
+      };
+    case 'LOGOUT':
+      return {
+        ...state,
+        isAuthenticated: false,
+        user: null,
+        error: null
+      };
+    default:
+      return state;
+  }
+}
 
-  const signOut = async () => {
-    localStorage.removeItem("userToken");
-    localStorage.removeItem("userName");
-    localStorage.removeItem("userEmail");
-    dispatch({ type: "SIGN_OUT" });
-    const res = await fetch(`${ResetEndpoint}/clearcookies`, {
-      method: "GET",
-    });
-    return res.ok;
-  };
+export function AuthProvider({ children }) {
+  const [state, dispatch] = useReducer(authReducer, initialState);
 
+  // Verificar si hay una sesión activa al cargar la aplicación
   useEffect(() => {
-    const restoreToken = () => {
-      const token = localStorage.getItem("userToken");
-      const name = localStorage.getItem("userName");
-      const email = localStorage.getItem("userEmail");
-      if (token && email) {
-        dispatch({
-          type: "RESTORE_TOKEN",
-          token: true,
-        });
-        dispatch({
-          type: "SIGN_IN",
-          token: true,
-          name,
-          email,
-        });
+    const checkAuth = async () => {
+      const token = localStorage.getItem('userToken');
+      const userData = localStorage.getItem('userData');
+
+      if (token && userData) {
+        try {
+          // Opcional: Verificar token con el backend
+          dispatch({ 
+            type: 'AUTH_SUCCESS', 
+            payload: JSON.parse(userData)
+          });
+        } catch (error) {
+          localStorage.removeItem('userToken');
+          localStorage.removeItem('userData');
+          dispatch({ 
+            type: 'AUTH_FAILURE', 
+            payload: 'Sesión expirada' 
+          });
+          console.log(error);
+        }
+      } else {
+        dispatch({ type: 'AUTH_FAILURE', payload: null });
       }
     };
-    restoreToken();
+
+    checkAuth();
   }, []);
 
-  const authContext = useMemo(
-    () => ({
-      state,
-      signIn,
-      signOut,
-    }),
-    [state.userToken, state.emailUser, state.nameUser]
-  );
+  // Función de login mejorada
+  const login = async (credentials) => {
+    dispatch({ type: 'AUTH_LOADING' });
+
+    try {
+      const response = await fetch(`${AuthEndpoint}/sign-in`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include',
+        body: JSON.stringify(credentials)
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Error en el inicio de sesión');
+      }
+
+      const data = await response.json();
+
+      // Guardar datos en localStorage
+      localStorage.setItem('userToken', data.token);
+      localStorage.setItem('userData', JSON.stringify({
+        email: data.user.email,
+        name: data.user.name,
+        id: data.user.id
+      }));
+
+      dispatch({ 
+        type: 'AUTH_SUCCESS', 
+        payload: data.user 
+      });
+
+      return { success: true };
+    } catch (error) {
+      dispatch({ 
+        type: 'AUTH_FAILURE', 
+        payload: error.message 
+      });
+      return { 
+        success: false, 
+        error: error.message 
+      };
+    }
+  };
+
+  // Función de logout
+  const logout = async () => {
+    try {
+      // Opcional: Llamar al endpoint de logout en el backend
+      localStorage.removeItem('userToken');
+      localStorage.removeItem('userData');
+      dispatch({ type: 'LOGOUT' });
+      return { success: true };
+    } catch (error) {
+      return { 
+        success: false, 
+        error: error.message 
+      };
+    }
+  };
 
   return (
-    <AuthContext.Provider value={authContext}>{children}</AuthContext.Provider>
+    <AuthContext.Provider value={{ 
+      ...state, 
+      login, 
+      logout 
+    }}>
+      {children}
+    </AuthContext.Provider>
   );
+}
+
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth debe ser usado dentro de un AuthProvider');
+  }
+  return context;
 };

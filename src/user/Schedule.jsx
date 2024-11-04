@@ -10,7 +10,7 @@ function Schedule() {
   const [audioURL, setAudioURL] = useState(null);
   const [activityTime, setActivityTime] = useState("12:00"); // Hora por defecto
 
-  const daysOfWeek = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"];
+  const daysOfWeek = ["Dom","Lun", "Mar", "Mié", "Jue", "Vie", "Sáb" ];
 
   const handleRecording = async () => {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
