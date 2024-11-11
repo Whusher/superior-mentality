@@ -50,7 +50,6 @@ export function AuthProvider({ children }) {
     const checkAuth = async () => {
       const token = localStorage.getItem('userToken');
       const userData = localStorage.getItem('userData');
-
       if (token && userData) {
         try {
           // Opcional: Verificar token con el backend
@@ -128,6 +127,7 @@ export function AuthProvider({ children }) {
       // Opcional: Llamar al endpoint de logout en el backend
       localStorage.removeItem('userToken');
       localStorage.removeItem('userData');
+      localStorage.clear()
       dispatch({ type: 'LOGOUT' });
       return { success: true };
     } catch (error) {

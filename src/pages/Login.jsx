@@ -2,10 +2,11 @@ import { useState } from 'react'
 import { EyeIcon, EyeOffIcon } from '../utils/SVGExporter'
 import { Link, useNavigate,useLocation } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { toast } from 'react-toastify';
 export default function Login() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { login, isLoading, error } = useAuth();
+  const { login} = useAuth();
   const [formLogin, setFormLogin] = useState({
     email: '',
     password: ''
@@ -20,7 +21,10 @@ export default function Login() {
     
     if (result.success) {
       const from = location.state?.from?.pathname || '/schedule';
+      toast.success(`Welcome to Superior Mentality`);
       navigate(from, { replace: true });
+    }else{
+      toast.error('Incorrect Password/Email')
     }
   };
   const [showPassword, setShowPassword] = useState(false)

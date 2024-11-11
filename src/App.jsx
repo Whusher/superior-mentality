@@ -1,5 +1,7 @@
 import { BrowserRouter as Router, Route, Routes} from "react-router-dom";
+import { ToastContainer } from "react-toastify";
 import "./index.css";
+import 'react-toastify/dist/ReactToastify.css';
 // Layouts y páginas
 import MainPageL from "./layouts/MainPageL";
 import Error404 from "./pages/Error404";
@@ -32,6 +34,7 @@ function App() {
           <Route path="*" element={<Error404 />} />
         </Routes>
       </Router>
+      <ToastContainer/>
     </AuthProvider>
   );
 }
