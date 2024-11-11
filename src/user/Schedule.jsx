@@ -163,19 +163,10 @@ function Schedule() {
             currentActivitiesDay
               .filter((act) => {
                 //tratar el string de la fecha para formatear YYYY-DD-MM  ----> YYYY-MM-DD
-                let [year, day, monthExt] = act.DateAgenda.split("-");
-                // console.log({year,day,monthExt})
-                //MonthExt need extract the number so slice
-                let newMonthExt = monthExt.slice(0, 2);
-                //  console.log(newMonthExt)
-                // console.log(monthExt.slice(2))//LOS XTRAVALUE T06......
-
-                // console.log(`${year}-${newMonthExt}-${day}${monthExt.slice(2)}`) ///FINAL RESULT
-                // Crea una nueva fecha a partir de la cadena ISO completa
+                let [year, monthExt, day] = act.DateAgenda.split("-");
                 const activityDate = new Date(
-                  `${year}-${newMonthExt}-${day}${monthExt.slice(2)}`
+                  `${year}-${monthExt}-${day}`
                 );
-                // console.log(activityDate)
 
                 // Verifica que sea una fecha válida
                 if (isNaN(activityDate)) return false;
