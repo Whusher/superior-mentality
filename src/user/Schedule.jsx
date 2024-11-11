@@ -158,44 +158,48 @@ function Schedule() {
           <h2 className="text-2xl text-white mb-4">
             Schedule to {new Date(selectedDate).toLocaleDateString()}
           </h2>
-          <TimeReminder selectedDate={selectedDate}/>
+          <TimeReminder selectedDate={selectedDate} />
           {selectedDate &&
-  currentActivitiesDay
-    .filter((act) => {
-      //tratar el string de la fecha para formatear YYYY-DD-MM  ----> YYYY-MM-DD
-      let [year,day,monthExt] = act.DateAgenda.split('-')
-      // console.log({year,day,monthExt})
-      //MonthExt need extract the number so slice 
-      let newMonthExt = monthExt.slice(0,2)
-      //  console.log(newMonthExt)
-      // console.log(monthExt.slice(2))//LOS XTRAVALUE T06......
+            currentActivitiesDay
+              .filter((act) => {
+                //tratar el string de la fecha para formatear YYYY-DD-MM  ----> YYYY-MM-DD
+                let [year, day, monthExt] = act.DateAgenda.split("-");
+                // console.log({year,day,monthExt})
+                //MonthExt need extract the number so slice
+                let newMonthExt = monthExt.slice(0, 2);
+                //  console.log(newMonthExt)
+                // console.log(monthExt.slice(2))//LOS XTRAVALUE T06......
 
-      // console.log(`${year}-${newMonthExt}-${day}${monthExt.slice(2)}`) ///FINAL RESULT
-      // Crea una nueva fecha a partir de la cadena ISO completa
-      const activityDate = new Date(`${year}-${newMonthExt}-${day}${monthExt.slice(2)}`);
-      // console.log(activityDate)
+                // console.log(`${year}-${newMonthExt}-${day}${monthExt.slice(2)}`) ///FINAL RESULT
+                // Crea una nueva fecha a partir de la cadena ISO completa
+                const activityDate = new Date(
+                  `${year}-${newMonthExt}-${day}${monthExt.slice(2)}`
+                );
+                // console.log(activityDate)
 
-      // Verifica que sea una fecha válida
-      if (isNaN(activityDate)) return false;
+                // Verifica que sea una fecha válida
+                if (isNaN(activityDate)) return false;
 
-      // Obtiene solo la parte de año, mes y día de la fecha seleccionada
-      const selectedOnlyDate = new Date(
-        selectedDate.getUTCFullYear(),
-        selectedDate.getUTCMonth(),
-        selectedDate.getUTCDate()
-      );
-      return (
-        activityDate.getUTCFullYear() === selectedOnlyDate.getUTCFullYear() &&
-        activityDate.getUTCMonth() === selectedOnlyDate.getUTCMonth() &&
-        activityDate.getUTCDate() === selectedOnlyDate.getUTCDate()
-      );
-    })
-    .map((obj, idx) => (
-      <div className="flex items-center overflow-x-auto" key={idx}>
-        <p>{obj.ActivityDesc}</p>
-        <p>{obj.HourToDo}</p>
-      </div>
-    ))}
+                // Obtiene solo la parte de año, mes y día de la fecha seleccionada
+                const selectedOnlyDate = new Date(
+                  selectedDate.getUTCFullYear(),
+                  selectedDate.getUTCMonth(),
+                  selectedDate.getUTCDate()
+                );
+                return (
+                  activityDate.getUTCFullYear() ===
+                    selectedOnlyDate.getUTCFullYear() &&
+                  activityDate.getUTCMonth() ===
+                    selectedOnlyDate.getUTCMonth() &&
+                  activityDate.getUTCDate() === selectedOnlyDate.getUTCDate()
+                );
+              })
+              .map((obj, idx) => (
+                <div className="flex items-center overflow-x-auto" key={idx}>
+                  <p>{obj.ActivityDesc}</p>
+                  <p>{obj.HourToDo}</p>
+                </div>
+              ))}
           <div className="flex items-center overflow-x-auto">
             {activity == "" && ( //Allow record audio
               <button
