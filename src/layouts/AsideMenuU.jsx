@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 const menuOps = [
-  { icon: Games, menuOption: "Games", pageRef: "/games" },
+  { icon: Games, menuOption: "Games", pageRef: "/actividades/Actividades" },
   { icon: News, menuOption: "Schedule", pageRef: "/schedule" },
   { icon: User, menuOption: "Profile", pageRef: "/profile" },
   { icon: Records, menuOption: "Records", pageRef: "/profile" },
