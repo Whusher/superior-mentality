@@ -127,7 +127,7 @@ function Schedule() {
   }, [updater]);
   return (
     <div className="flex flex-col w-full mx-auto p-6 bg-minimal rounded-md">
-      <h1 className="text-3xl font-bold text-dark mb-4">TO DO List</h1>
+      <h1 className="text-3xl font-bold text-dark mb-4">TO DO List Rama PRE</h1>
 
       <div className="w-full overflow-x-auto">
         <div className="grid grid-cols-7 gap-4 mb-6 min-w-max">
