@@ -1,31 +1,32 @@
 import { useState } from 'react'
 import { EyeIcon, EyeOffIcon } from '../utils/SVGExporter'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate,useLocation } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { toast } from 'react-toastify';
 export default function Login() {
-  const {signIn} = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { login} = useAuth();
   const [formLogin, setFormLogin] = useState({
     email: '',
     password: ''
   })
-  const navigate = useNavigate();
   const handleChange = (e)=>{
     setFormLogin({...formLogin, [e.target.name]: e.target.value})
   }
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {  
-        const res = await signIn(formLogin);
-        if(res){
-          navigate('/schedule')
-        }else{
-          alert('ERROR LOGIN FAILED')
-        }
-    } catch (e) {
-        console.log(e);
-        alert('Login failed');
+    
+    const result = await login(formLogin);
+    
+    if (result.success) {
+      const from = location.state?.from?.pathname || '/schedule';
+      toast.success(`Welcome to Superior Mentality`);
+      navigate(from, { replace: true });
+    }else{
+      toast.error('Incorrect Password/Email')
     }
-};
+  };
   const [showPassword, setShowPassword] = useState(false)
 
   const togglePasswordVisibility = () => setShowPassword(!showPassword)

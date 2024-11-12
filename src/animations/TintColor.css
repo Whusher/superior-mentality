@@ -1,17 +1,16 @@
 @keyframes jump {
     0%{
-        transform: translateY(-5px);
+        color: azure;
     }
     50%{
-        transform: translateY(-15px);
+        color: azure;
     }
     100%{
-        transform: translateY(-5px);
-        color: azure;
+        color: #6581A6;
     }
 }
 
-.jumper {
+.tinter {
     display: inline;
     transition: all;
     transition-delay: 900ms;
