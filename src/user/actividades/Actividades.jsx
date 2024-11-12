@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import ContentLA from './ContentLA'; // Importa ContentLA
+import ContentLA from '../../layouts/ContentLA'; // Importa ContentLA
 
 const ActivityList = () => {
   const [activities, setActivities] = useState([]);
@@ -11,11 +11,11 @@ const ActivityList = () => {
   const fetchActivities = async () => {
     try {
       const data = [
-        { id: 1, title: "Juego de Memoria", description: "Encuentra los pares.", route: "/memory-game" },
-        { id: 2, title: "Secuencia de Colores", description: "Repite la secuencia.", route: "/color-sequence" },
-        { id: 3, title: "Atrapador de Frutas", description: "Atrapa las frutas.", route: "/fruit-catcher" },
-        { id: 4, title: "Dibujo Rápido", description: "Dibuja el objeto en un tiempo limitado.", route: "/drawing-game" },
-        { id: 5, title: "Simón Dice", description: "Repite la secuencia de colores.", route: "/simon-says" },
+        { id: 1, title: "Juego de Memoria", description: "Encuentra los pares.", route: "/actividades/MemoryGame" },
+        { id: 2, title: "Secuencia de Colores", description: "Repite la secuencia.", route: "/actividades/ColorSequence" },
+        { id: 3, title: "Atrapador de Frutas", description: "Atrapa las frutas.", route: "/actividades/FruitCatcher" },
+        { id: 4, title: "Dibujo Rápido", description: "Dibuja el objeto en un tiempo limitado.", route: "/actividades/DrawingGame" },
+        { id: 5, title: "Simón Dice", description: "Repite la secuencia de colores.", route: "/actividades/SimonSays" },
       ];
       setActivities(data);
     } catch (err) {

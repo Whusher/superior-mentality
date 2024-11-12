@@ -8,7 +8,7 @@ import Error404 from "./pages/Error404";
 import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
 import Schedule from "./user/Schedule";
-import ActividadesList from "./user/actividades/ActividadesList"
+import ActividadesList from "./user/actividades/Actividades"
 import ColorSequence from "./user/actividades/ColorSequence"
 import DrawingGame from "./user/actividades/DrawingGame"
 import FruitCatcher from "./user/actividades/FruitCatcher"
