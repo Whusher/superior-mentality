@@ -96,9 +96,27 @@ function Schedule() {
   const handleCompleteActivity = async (e, actObject) => {
     e.preventDefault();
     try{
-      const res=0;
+      const res = await fetch(`${ActivitiesEndpoint}/markActivityAsCompleted`,{
+        method: 'POST',
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("userToken")}`,
+        },
+        body: JSON.stringify(actObject)
+      })
+      if(res.ok){
+        const data = await res.json();
+        toast.success(`${data.message}`);
+      }else{
+        toast.error('Can not mark as complete this activity...');
+      }
+      
+      console.log(actObject)
     }catch(e){
+      console.log(e)
       toast.error('Can not mark as complete this activity...');
+    }finally{
+      setUpdater(!updater);
     }
   }
 
@@ -179,6 +197,7 @@ function Schedule() {
                     Activity Desc
                   </th>
                   <th className="py-2">Priority</th>
+                  <th className="py-2">Hour to Do</th>
                   <th className="py-2">Actions</th>
                 </tr>
               </thead>
@@ -186,53 +205,45 @@ function Schedule() {
                 {selectedDate &&
                   currentActivitiesDay
                     .filter((act) => {
-
-                      //CHATSITO
                       let actDate = new Date(act.DateAgenda); // Convertimos el string a un objeto Date
+                      // Asegúrate de usar la zona horaria UTC para la fecha de la base de datos
+                     let actDateUTC = new Date(Date.UTC(actDate.getUTCFullYear(), actDate.getUTCMonth(), actDate.getUTCDate()));
+                     actDateUTC = actDateUTC.toISOString()
+                    //  console.log(actDateUTC)
+                    //  console.log(actDateUTC.slice(0,4))//ANIO
+                    //  console.log(actDateUTC.slice(5,7))//MES correcto
+                    //  console.log(actDateUTC.slice(8,10))//DIA
+                      //YA ES OK LA FECHA DE LA ACTIVIDAD
 
-// La fecha seleccionada también debe ser un objeto Date
-let selectedDateObj = new Date(selectedDate); // Asegúrate de que selectedDate sea un string en formato 'YYYY-MM-DD'
-
-// Asegúrate de comparar solo la parte de la fecha (no las horas/minutos/segundos)
-let selectedDateFormatted = selectedDateObj.toISOString().split('T')[0]; // Esto da 'YYYY-MM-DD'
-let actDateFormatted = actDate.toISOString().split('T')[0]; // Esto da 'YYYY-MM-DD' ME DA OK CON EL DIA DE HOY
-
-// Imprimir para ver los valores
-console.log('Act Date (Formatted):', actDateFormatted);
-console.log('Selected Date (Formatted):', selectedDateFormatted);
-
-// Comparar las fechas
-if (actDateFormatted === selectedDateFormatted) {
-  console.log("Las fechas coinciden.");
-} else {
-  console.log("Las fechas no coinciden.");
-}
-
-
-
-                      //tratar el string de la fecha para formatear YYYY-DD-MM  ----> YYYY-MM-DD
-                      let [year, monthExt, day] = act.DateAgenda.split("-");
-                      const activityDate = new Date(
-                        `${year}-${monthExt}-${day}`
-                      );
-                     console.log(new Date())
+                      //HACER OK La fecha de selected date
+                      let newSelectedDate = new Date(Date.UTC(selectedDate.getUTCFullYear(), selectedDate.getUTCMonth(), selectedDate.getUTCDate()))
+                    //  console.log( newSelectedDate)
+                    //  console.log( newSelectedDate.getFullYear()) //ANIO
+                    //  console.log('MONTH SELECT', newSelectedDate.getUTCMonth()+1) //Te da el mes 0 es enero
+                    //  console.log( newSelectedDate.getDate())
 
                       // Verifica que sea una fecha válida
-                      if (isNaN(activityDate)) return false;
+                      // if (isNaN(actDateUTC)) return false;
 
                       // Obtiene solo la parte de año, mes y día de la fecha seleccionada
-                      const selectedOnlyDate = new Date(
-                        selectedDate.getUTCFullYear(),
-                        selectedDate.getUTCMonth(),
-                        selectedDate.getUTCDate()
-                      );
+                      
+                      // Extraemos las partes de año, mes y día de ambas fechas
+                      // let actDateFormatted = actDateUTC.slice(0, 10); // Formato YYYY-MM-DD
+                      let [year,month,day] = newSelectedDate.toISOString().slice(0, 10).split('-')
+                      let selectedDateFormatted = `${year}-${month}-${day-1}`; // Formato YYYY-MM-DD
+                      let textSelectedDate = `${actDateUTC.slice(0,4)}-${actDateUTC.slice(5,7)}-${actDateUTC.slice(8,10)}`
+                      // console.log('Act Date Formatted:', textSelectedDate);
+                      // console.log('Selected Date Formatted:', selectedDateFormatted);
+
+                      // // Comparar solo la parte de la fecha (YYYY-MM-DD)
+                      // if (textSelectedDate === selectedDateFormatted) {
+                      //     console.log("Las fechas coinciden.");
+                      // } else {
+                      //     console.log("Las fechas no coinciden.");
+                      // }
+
                       return (
-                        activityDate.getUTCFullYear() ===
-                          selectedOnlyDate.getUTCFullYear() &&
-                        activityDate.getUTCMonth() ===
-                          selectedOnlyDate.getUTCMonth() &&
-                        activityDate.getUTCDate() ===
-                          selectedOnlyDate.getUTCDate()
+                        textSelectedDate == selectedDateFormatted
                       );
                     })
                     .map((obj, idx) => (
@@ -267,11 +278,16 @@ if (actDateFormatted === selectedDateFormatted) {
                             {getPriorityLabel(obj.Priority)}
                           </span>
                         </td>
+                        <td className="border-opac p-4 text-center border">
+                          <span className="font-sans font-semibold text-darker-light">{obj.HourToDo}</span>
+                        </td>
                         <td className="border-opac p-4 text-center mx-auto my-0 border">
                           {
                             obj.IsCompleted === 0 ? (
 
-                          <button className="flex justify-center items-center space-x-2 hover:bg-green-500 max-w-48 transition-all delay-150 ease-linear bg-gray-600 text-white rounded-md p-3 font-semibold text-center">
+                          <button 
+                              onClick={(e)=>handleCompleteActivity(e,obj)}
+                            className="flex justify-center items-center space-x-2 hover:bg-green-500 max-w-48 transition-all delay-150 ease-linear bg-gray-600 text-white rounded-md p-3 font-semibold text-center">
                             <span>Mark As Completed</span>  <span className="text-white text-center">{CheckIcon()}</span> 
                           </button>
                             ) :
