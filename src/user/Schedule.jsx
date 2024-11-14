@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import ContentLA from "../layouts/ContentLA";
-import { Microphone, Stop } from "../utils/SVGExporter";
+import { CheckIcon, Microphone, Stop } from "../utils/SVGExporter";
 import { useAuth } from "../context/AuthContext";
 import { uploadAudio } from "../firebase/Initialization";
 import { toast } from "react-toastify";
@@ -93,6 +93,15 @@ function Schedule() {
     }
   };
 
+  const handleCompleteActivity = async (e, actObject) => {
+    e.preventDefault();
+    try{
+      const res=0;
+    }catch(e){
+      toast.error('Can not mark as complete this activity...');
+    }
+  }
+
   const getCalendarDays = () => {
     const today = new Date();
     return Array.from({ length: 7 }, (_, i) => {
@@ -127,7 +136,7 @@ function Schedule() {
   }, [updater]);
   return (
     <div className="flex flex-col w-full mx-auto p-6 bg-minimal rounded-md">
-      <h1 className="text-3xl font-bold text-dark mb-4">TO DO List Rama PRE</h1>
+      <h1 className="text-3xl font-bold text-dark mb-4">TO DO List</h1>
 
       <div className="w-full overflow-x-auto">
         <div className="grid grid-cols-7 gap-4 mb-6 min-w-max">
@@ -159,38 +168,121 @@ function Schedule() {
             Schedule to {new Date(selectedDate).toLocaleDateString()}
           </h2>
           <TimeReminder selectedDate={selectedDate} />
-          {selectedDate &&
-            currentActivitiesDay
-              .filter((act) => {
-                //tratar el string de la fecha para formatear YYYY-DD-MM  ----> YYYY-MM-DD
-                let [year, monthExt, day] = act.DateAgenda.split("-");
-                const activityDate = new Date(
-                  `${year}-${monthExt}-${day}`
-                );
+          <div
+            className={`flex items-center overflow-x-auto bg-darker-light  mt-3 
+            ${currentActivitiesDay.length == 0 && "hidden"}`}
+          >
+            <table className="w-full overflow-x-auto rounded-sm">
+              <thead>
+                <tr className="text-minimal text-lg bg-darker-light">
+                  <th className="min-w-[200px] md:min-w-[400px]">
+                    Activity Desc
+                  </th>
+                  <th className="py-2">Priority</th>
+                  <th className="py-2">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="bg-minimal rounded-md">
+                {selectedDate &&
+                  currentActivitiesDay
+                    .filter((act) => {
 
-                // Verifica que sea una fecha válida
-                if (isNaN(activityDate)) return false;
+                      //CHATSITO
+                      let actDate = new Date(act.DateAgenda); // Convertimos el string a un objeto Date
 
-                // Obtiene solo la parte de año, mes y día de la fecha seleccionada
-                const selectedOnlyDate = new Date(
-                  selectedDate.getUTCFullYear(),
-                  selectedDate.getUTCMonth(),
-                  selectedDate.getUTCDate()
-                );
-                return (
-                  activityDate.getUTCFullYear() ===
-                    selectedOnlyDate.getUTCFullYear() &&
-                  activityDate.getUTCMonth() ===
-                    selectedOnlyDate.getUTCMonth() &&
-                  activityDate.getUTCDate() === selectedOnlyDate.getUTCDate()
-                );
-              })
-              .map((obj, idx) => (
-                <div className="flex items-center overflow-x-auto" key={idx}>
-                  <p>{obj.ActivityDesc}</p>
-                  <p>{obj.HourToDo}</p>
-                </div>
-              ))}
+// La fecha seleccionada también debe ser un objeto Date
+let selectedDateObj = new Date(selectedDate); // Asegúrate de que selectedDate sea un string en formato 'YYYY-MM-DD'
+
+// Asegúrate de comparar solo la parte de la fecha (no las horas/minutos/segundos)
+let selectedDateFormatted = selectedDateObj.toISOString().split('T')[0]; // Esto da 'YYYY-MM-DD'
+let actDateFormatted = actDate.toISOString().split('T')[0]; // Esto da 'YYYY-MM-DD' ME DA OK CON EL DIA DE HOY
+
+// Imprimir para ver los valores
+console.log('Act Date (Formatted):', actDateFormatted);
+console.log('Selected Date (Formatted):', selectedDateFormatted);
+
+// Comparar las fechas
+if (actDateFormatted === selectedDateFormatted) {
+  console.log("Las fechas coinciden.");
+} else {
+  console.log("Las fechas no coinciden.");
+}
+
+
+
+                      //tratar el string de la fecha para formatear YYYY-DD-MM  ----> YYYY-MM-DD
+                      let [year, monthExt, day] = act.DateAgenda.split("-");
+                      const activityDate = new Date(
+                        `${year}-${monthExt}-${day}`
+                      );
+                     console.log(new Date())
+
+                      // Verifica que sea una fecha válida
+                      if (isNaN(activityDate)) return false;
+
+                      // Obtiene solo la parte de año, mes y día de la fecha seleccionada
+                      const selectedOnlyDate = new Date(
+                        selectedDate.getUTCFullYear(),
+                        selectedDate.getUTCMonth(),
+                        selectedDate.getUTCDate()
+                      );
+                      return (
+                        activityDate.getUTCFullYear() ===
+                          selectedOnlyDate.getUTCFullYear() &&
+                        activityDate.getUTCMonth() ===
+                          selectedOnlyDate.getUTCMonth() &&
+                        activityDate.getUTCDate() ===
+                          selectedOnlyDate.getUTCDate()
+                      );
+                    })
+                    .map((obj, idx) => (
+                      <tr key={idx} className="border-4  border-opac p-4">
+                        {
+                          obj.ActivityAudioURL ? (
+                          <td className="border-opac p-4 text-center mx-0 my-auto">
+                             <audio controls>
+                              <source src={obj.ActivityAudioURL } type="audio/mpeg" />
+                              Your browser doesnt support audio controls
+                            </audio>
+                          </td>
+                          ) : (
+
+                          <td className={`border-opac p-4 text-center font-sans text-dark ${obj.IsCompleted ? 'line-through' : ''}`}>
+                            {obj.ActivityDesc}
+                          </td>
+                          )
+                        }
+                        <td className="border-opac p-4 text-center border">
+                          <span
+                            className={`border-opac p-4 text-center rounded-md text-white font-bold ${
+                              obj.Priority === 1
+                                ? "bg-red-500 text-white" // Urgente
+                                : obj.Priority === 2
+                                ? "bg-yellow-500 text-black" // Media
+                                : obj.Priority === 3
+                                ? "bg-green-500 text-white" // Baja
+                                : "bg-gray-300 text-gray-700" // Desconocido
+                            }`}
+                          >
+                            {getPriorityLabel(obj.Priority)}
+                          </span>
+                        </td>
+                        <td className="border-opac p-4 text-center mx-auto my-0 border">
+                          {
+                            obj.IsCompleted === 0 ? (
+
+                          <button className="flex justify-center items-center space-x-2 hover:bg-green-500 max-w-48 transition-all delay-150 ease-linear bg-gray-600 text-white rounded-md p-3 font-semibold text-center">
+                            <span>Mark As Completed</span>  <span className="text-white text-center">{CheckIcon()}</span> 
+                          </button>
+                            ) :
+                            <span className="p-4 bg-green-500 text-white rounded-lg font-semibold">DONE</span>
+                          }
+                        </td>
+                      </tr>
+                    ))}
+              </tbody>
+            </table>
+          </div>
           <div className="flex items-center overflow-x-auto">
             {activity == "" && ( //Allow record audio
               <button
@@ -286,6 +378,19 @@ function Schedule() {
       </p>
     </div>
   );
+}
+
+function getPriorityLabel(priority) {
+  switch (priority) {
+    case 1:
+      return "Urgent";
+    case 2:
+      return "Medium";
+    case 3:
+      return "Low";
+    default:
+      return "Finished";
+  }
 }
 
 export default function ViewSchedule() {
