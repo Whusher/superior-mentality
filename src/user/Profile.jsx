@@ -86,7 +86,7 @@ const Profile = () => {
             src={pencil}
             alt="edit"
             className="edit-icon"
-            onClick={() => navigate('/EditProfilePreferences')}
+            onClick={() => navigate('/editProfilePreferences')}
           />
         </div>
         <div className="profile-info-item" style={{ position: 'relative' }}>

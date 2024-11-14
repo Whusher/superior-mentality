@@ -14,11 +14,14 @@ import DrawingGame from "./user/actividades/DrawingGame"
 import FruitCatcher from "./user/actividades/FruitCatcher"
 import MemoryGame from "./user/actividades/MemoryGame"
 import SimonSays from "./user/actividades/SimonSays"
-import EditProfilePreferences from "./user/editProfilePreferences.jsx";
-import EditProfileMusic from "./user/editProfileMusic.jsx";
-import EditProfileImage from "./user/editProfileImage.jsx";
-import EditProfileColors from "./user/editProfileColors.jsx";
-import Profile from "./user/profile.jsx";
+import EditProfilePreferences from "./user/EditProfilePreferences.jsx";
+import EditProfileMusic from "./user/EditProfileMusic.jsx";
+import EditProfileImage from "./user/EditProfileImage.jsx";
+import EditProfileColors from "./user/EditProfileColors.jsx";
+import Profile from "./user/Profile.jsx";
+import Subscription from "./user/Subscription.jsx";
+import Thankyou from "./user/Thankyou.jsx";
+
 
 // src/App.jsx
 import { AuthProvider } from './context/AuthContext';
@@ -52,6 +55,8 @@ function App() {
             <Route path="/editProfileImage" element={<ProtectedRoute><EditProfileImage /></ProtectedRoute>} />
             <Route path="/editProfileColors" element={<ProtectedRoute><EditProfileColors /></ProtectedRoute>} />
             <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+            <Route path="/subscription" element={<ProtectedRoute><Subscription /></ProtectedRoute>} />
+            <Route path="/thankyou" element={<ProtectedRoute><Thankyou /></ProtectedRoute>} />
           <Route path="*" element={<Error404 />} />
         </Routes>
       </Router>

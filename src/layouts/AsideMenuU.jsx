@@ -7,9 +7,9 @@ const menuOps = [
   { icon: Games, menuOption: "Games", pageRef: "/actividades/Actividades" },
   { icon: News, menuOption: "Schedule", pageRef: "/schedule" },
   { icon: User, menuOption: "Profile", pageRef: "/profile" },
-  { icon: Records, menuOption: "Records", pageRef: "/profile" },
+  { icon: Records, menuOption: "Records", pageRef: "/records" },
   { icon: History, menuOption: "History", pageRef: "/History" },
-  { icon: Suscription, menuOption: "Suscription", pageRef: "/profile" },
+  { icon: Suscription, menuOption: "Suscription", pageRef: "/subscription" },
 ];
 
 export default function AsideMenuU({ options = menuOps }) {
