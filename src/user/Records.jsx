@@ -82,6 +82,14 @@ const Records = () => {
           ))}
         </div>
       )}
+      <div className="flex justify-center mt-6">
+        <button
+          onClick={() => navigate('/graph')}
+          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+        >
+          Visualizar Gráfica
+        </button>
+      </div>
     </div>
   );
 

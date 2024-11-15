@@ -18,6 +18,7 @@ export const PaySaveEndpoint = `http://localhost:4321/pay-save`;
 export const CheckSubscriptionEndpoint = `http://localhost:4321/check-subscription`;
 export const UpdateScoreEndpoint = `http://localhost:4321/update-score`;
 export const TopActivitiesEndpoint = `http://localhost:4321/top-activities`;
+export const GraphRecordsEndpoint = `http://localhost:4321/activities-scores-graph`;
 
 // export const AuthEndpoint = 'http://localhost:1234/user';
 // export const ResetEndpoint = 'http://localhost:1234'
