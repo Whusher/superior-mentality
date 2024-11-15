@@ -7,6 +7,7 @@ import MainPageL from "./layouts/MainPageL";
 import Error404 from "./pages/Error404";
 import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
+import News from "./pages/News.jsx";
 import Schedule from "./user/Schedule";
 import ActividadesList from "./user/actividades/Actividades"
 import ColorSequence from "./user/actividades/ColorSequence"
@@ -23,7 +24,6 @@ import Subscription from "./user/Subscription.jsx";
 import Thankyou from "./user/Thankyou.jsx";
 import Records from "./user/Records.jsx";
 
-
 // src/App.jsx
 import { AuthProvider } from './context/AuthContext';
 import { ProtectedRoute } from './components/ProtectedRoute';
@@ -36,6 +36,7 @@ function App() {
           <Route path="/" element={<MainPageL />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
+          <Route path="/news" element={<News />} />
           <Route
             path="/schedule"
             element={
