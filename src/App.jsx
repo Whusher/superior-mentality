@@ -21,6 +21,7 @@ import EditProfileColors from "./user/EditProfileColors.jsx";
 import Profile from "./user/Profile.jsx";
 import Subscription from "./user/Subscription.jsx";
 import Thankyou from "./user/Thankyou.jsx";
+import Records from "./user/Records.jsx";
 
 
 // src/App.jsx
@@ -44,7 +45,7 @@ function App() {
             }
           />
             <Route path="/schedule" element={<Schedule />} />
-            <Route path="/actividades/Actividades" element={<ProtectedRoute> <ActividadesList /> </ProtectedRoute>} />
+            <Route path="/activities" element={<ProtectedRoute> <ActividadesList /> </ProtectedRoute>} />
             <Route path="/actividades/ColorSequence" element={<ProtectedRoute> <ColorSequence /> </ProtectedRoute>} />
             <Route path="/actividades/DrawingGame" element={<ProtectedRoute> <DrawingGame /> </ProtectedRoute>} />
             <Route path="/actividades/FruitCatcher" element={<ProtectedRoute> <FruitCatcher /> </ProtectedRoute>} />
@@ -57,6 +58,7 @@ function App() {
             <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
             <Route path="/subscription" element={<ProtectedRoute><Subscription /></ProtectedRoute>} />
             <Route path="/thankyou" element={<ProtectedRoute><Thankyou /></ProtectedRoute>} />
+            <Route path="/records" element={<ProtectedRoute><Records /></ProtectedRoute>} />
           <Route path="*" element={<Error404 />} />
         </Routes>
       </Router>

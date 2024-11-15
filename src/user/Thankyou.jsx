@@ -1,4 +1,3 @@
-// ThankYou.jsx
 import React, { useEffect } from 'react';
 import './Subscription.css';
 import ContentLA from "../layouts/ContentLA";

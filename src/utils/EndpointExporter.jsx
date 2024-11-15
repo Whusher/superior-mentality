@@ -16,5 +16,8 @@ export const OptionsColorsEndpoint = `http://localhost:4321/options-colors`;
 export const MPEndpoint = `http://localhost:4321/mp`;
 export const PaySaveEndpoint = `http://localhost:4321/pay-save`;
 export const CheckSubscriptionEndpoint = `http://localhost:4321/check-subscription`;
+export const UpdateScoreEndpoint = `http://localhost:5000/update-score`;
+export const TopActivitiesEndpoint = `http://localhost:5000/top-activities`;
+
 // export const AuthEndpoint = 'http://localhost:1234/user';
 // export const ResetEndpoint = 'http://localhost:1234'

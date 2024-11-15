@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { UpdateScoreEndpoint } from '../../utils/EndpointExporter';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from "../../context/AuthContext";
 
 const MemoryGame = () => {
   const [cards, setCards] = useState([]);
@@ -7,6 +10,35 @@ const MemoryGame = () => {
   const [isGameStarted, setIsGameStarted] = useState(false);
   const [showCards, setShowCards] = useState(false);
   const [timer, setTimer] = useState(60);
+  const [score, setScore] = useState(0);
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const name = user?.name
+  
+  const saveScore = async (newScore) => {
+    const token = localStorage.getItem('userToken');
+    
+    
+    try {
+      const response = await fetch(`${UpdateScoreEndpoint}?token=${token}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          score: newScore,
+          id_activity: 1,
+          username: name, 
+        }),
+      });
+      
+      const result = await response.json();
+      console.log(result.message);
+    } catch (error) {
+      console.error('Error saving score:', error);
+    }
+  };
+  
 
   const initialCards = [
     { id: 1, name: 'A' }, { id: 2, name: 'B' }, { id: 3, name: 'C' },
@@ -46,6 +78,7 @@ const MemoryGame = () => {
       const secondCard = cards[index];
       if (firstCard.name === secondCard.name) {
         setMatchedCards((prev) => [...prev, firstCard.name]);
+        setScore((prevScore) => prevScore + 10);
       }
       setTimeout(() => setFlippedCards([]), 1000);
     }
@@ -58,7 +91,7 @@ const MemoryGame = () => {
     setFlippedCards([]);
     setTimer(60);
     setShowCards(true);
-    setTimeout(() => setShowCards(false), 60000); // Esconder cartas después de 1 minuto
+    setTimeout(() => setShowCards(false), 60000);
   };
 
   const resetGame = () => {
@@ -68,6 +101,8 @@ const MemoryGame = () => {
     setMatchedCards([]);
     setTimer(60);
     setShowCards(false);
+    saveScore(score);
+    setScore(0);
   };
 
   return (
@@ -87,7 +122,7 @@ const MemoryGame = () => {
           >
             {flippedCards.includes(index) || matchedCards.includes(card.name) || showCards
               ? card.name
-              : '?'}
+              : '?' }
           </div>
         ))}
       </div>
@@ -107,6 +142,12 @@ const MemoryGame = () => {
           Reiniciar
         </button>
       </div>
+      <button
+        className="bg-gray-500 text-white px-4 py-2 rounded mt-4"
+        onClick={() => navigate('/activities')}
+      >
+        Atrás
+      </button>
     </div>
   );
 };
