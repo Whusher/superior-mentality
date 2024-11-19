@@ -9,7 +9,6 @@ const menuOps = [
   { icon: User, menuOption: "Profile", pageRef: "/profile" },
   { icon: Records, menuOption: "Records", pageRef: "/records" },
   { icon: Suscription, menuOption: "Suscription", pageRef: "/subscription" },
-  { icon: Records, menuOption: "Records", pageRef: "/profile" },
   { icon: History, menuOption: "History", pageRef: "/history" },
 ];
 

@@ -24,6 +24,7 @@
   height: 150px;
   border-radius: 50%;
   border: 3px solid #3D5473; 
+  z-index: -1;
 }
 
 .perfil-nombre {

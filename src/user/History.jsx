@@ -58,8 +58,8 @@ const ActivityChart = () => {
   }
 
   return (
-    <div className="rounded-lg bg-white">
-      <div className="w-[900px] p-4">
+    <div className="rounded-lg bg-white md:block flex flex-col justify-center">
+      <div className="md:w-[900px] w-[400px] p-4 md:h-auto h-[600px]">
         <h2>Porcentaje de Actividades Completadas Manualmente</h2>
         <div className="mb-4">
           <label className="mr-2">Inicio:</label>
@@ -81,7 +81,7 @@ const ActivityChart = () => {
         </div>
         <Line data={chartData} />
       </div>
-      <div className="w-[900px] mt-7 p-4">
+      <div className="md:w-[900px] w-[400px] md:h-auto  h-[600px] mt-7 p-4">
         <h2>Activities Closed vs Incomplete</h2>
         <ActivityComparisonChart startDate={startDate} endDate={endDate} />
       </div>
