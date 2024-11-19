@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Line, Bar } from "react-chartjs-2";
 import axios from "axios";
 import "chart.js/auto"; // Necesario para que Chart.js funcione correctamente
-import { ActivitiesEndpoint } from "../utils/EndpointExporter";
+// import { ActivitiesEndpoint } from "../utils/EndpointExporter";
 import ContentLA from "../layouts/ContentLA";
 
 const ActivityChart = () => {
