@@ -14,6 +14,7 @@ import DrawingGame from "./user/actividades/DrawingGame"
 import FruitCatcher from "./user/actividades/FruitCatcher"
 import MemoryGame from "./user/actividades/MemoryGame"
 import SimonSays from "./user/actividades/SimonSays"
+import History from "./user/History"
 
 
 
@@ -37,7 +38,7 @@ function App() {
               </ProtectedRoute>
             }
           />
-            <Route path="/schedule" element={<Schedule />} />
+            <Route path="/history" element={<ProtectedRoute> <History/> </ProtectedRoute>} />
             <Route path="/actividades/Actividades" element={<ProtectedRoute> <ActividadesList /> </ProtectedRoute>} />
             <Route path="/actividades/ColorSequence" element={<ProtectedRoute> <ColorSequence /> </ProtectedRoute>} />
             <Route path="/actividades/DrawingGame" element={<ProtectedRoute> <DrawingGame /> </ProtectedRoute>} />

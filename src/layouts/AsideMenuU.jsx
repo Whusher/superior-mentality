@@ -8,7 +8,7 @@ const menuOps = [
   { icon: News, menuOption: "Schedule", pageRef: "/schedule" },
   { icon: User, menuOption: "Profile", pageRef: "/profile" },
   { icon: Records, menuOption: "Records", pageRef: "/profile" },
-  { icon: History, menuOption: "History", pageRef: "/History" },
+  { icon: History, menuOption: "History", pageRef: "/history" },
   { icon: Suscription, menuOption: "Suscription", pageRef: "/profile" },
 ];
 

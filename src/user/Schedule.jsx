@@ -95,30 +95,30 @@ function Schedule() {
 
   const handleCompleteActivity = async (e, actObject) => {
     e.preventDefault();
-    try{
-      const res = await fetch(`${ActivitiesEndpoint}/markActivityAsCompleted`,{
-        method: 'POST',
+    try {
+      const res = await fetch(`${ActivitiesEndpoint}/markActivityAsCompleted`, {
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("userToken")}`,
         },
-        body: JSON.stringify(actObject)
-      })
-      if(res.ok){
+        body: JSON.stringify(actObject),
+      });
+      if (res.ok) {
         const data = await res.json();
         toast.success(`${data.message}`);
-      }else{
-        toast.error('Can not mark as complete this activity...');
+      } else {
+        toast.error("Can not mark as complete this activity...");
       }
-      
-      console.log(actObject)
-    }catch(e){
-      console.log(e)
-      toast.error('Can not mark as complete this activity...');
-    }finally{
+
+      console.log(actObject);
+    } catch (e) {
+      console.log(e);
+      toast.error("Can not mark as complete this activity...");
+    } finally {
       setUpdater(!updater);
     }
-  }
+  };
 
   const getCalendarDays = () => {
     const today = new Date();
@@ -128,6 +128,29 @@ function Schedule() {
       return day;
     });
   };
+
+  const finishDay = async (agendaId) => {
+    try {
+      const response = await fetch("http://localhost:4321/finish-day", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ agendaId }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log(data.message);
+        alert("Agenda completed successfully!");
+      } else {
+        console.error("Failed to finish day.");
+      }
+    } catch (error) {
+      console.error("Error finishing day:", error);
+    }
+  };
+
   useEffect(() => {
     //CURRENT STATE OF ACTIVITIES
     const fetchActivities = async () => {
@@ -207,31 +230,49 @@ function Schedule() {
                     .filter((act) => {
                       let actDate = new Date(act.DateAgenda); // Convertimos el string a un objeto Date
                       // Asegúrate de usar la zona horaria UTC para la fecha de la base de datos
-                     let actDateUTC = new Date(Date.UTC(actDate.getUTCFullYear(), actDate.getUTCMonth(), actDate.getUTCDate()));
-                     actDateUTC = actDateUTC.toISOString()
-                    //  console.log(actDateUTC)
-                    //  console.log(actDateUTC.slice(0,4))//ANIO
-                    //  console.log(actDateUTC.slice(5,7))//MES correcto
-                    //  console.log(actDateUTC.slice(8,10))//DIA
+                      let actDateUTC = new Date(
+                        Date.UTC(
+                          actDate.getUTCFullYear(),
+                          actDate.getUTCMonth(),
+                          actDate.getUTCDate()
+                        )
+                      );
+                      actDateUTC = actDateUTC.toISOString();
+                      //  console.log(actDateUTC)
+                      //  console.log(actDateUTC.slice(0,4))//ANIO
+                      //  console.log(actDateUTC.slice(5,7))//MES correcto
+                      //  console.log(actDateUTC.slice(8,10))//DIA
                       //YA ES OK LA FECHA DE LA ACTIVIDAD
 
                       //HACER OK La fecha de selected date
-                      let newSelectedDate = new Date(Date.UTC(selectedDate.getUTCFullYear(), selectedDate.getUTCMonth(), selectedDate.getUTCDate()))
-                    //  console.log( newSelectedDate)
-                    //  console.log( newSelectedDate.getFullYear()) //ANIO
-                    //  console.log('MONTH SELECT', newSelectedDate.getUTCMonth()+1) //Te da el mes 0 es enero
-                    //  console.log( newSelectedDate.getDate())
+                      let newSelectedDate = new Date(
+                        Date.UTC(
+                          selectedDate.getUTCFullYear(),
+                          selectedDate.getUTCMonth(),
+                          selectedDate.getUTCDate()
+                        )
+                      );
+                      //  console.log( newSelectedDate)
+                      //  console.log( newSelectedDate.getFullYear()) //ANIO
+                      //  console.log('MONTH SELECT', newSelectedDate.getUTCMonth()+1) //Te da el mes 0 es enero
+                      //  console.log( newSelectedDate.getDate())
 
                       // Verifica que sea una fecha válida
                       // if (isNaN(actDateUTC)) return false;
 
                       // Obtiene solo la parte de año, mes y día de la fecha seleccionada
-                      
+
                       // Extraemos las partes de año, mes y día de ambas fechas
                       // let actDateFormatted = actDateUTC.slice(0, 10); // Formato YYYY-MM-DD
-                      let [year,month,day] = newSelectedDate.toISOString().slice(0, 10).split('-')
-                      let selectedDateFormatted = `${year}-${month}-${day-1}`; // Formato YYYY-MM-DD
-                      let textSelectedDate = `${actDateUTC.slice(0,4)}-${actDateUTC.slice(5,7)}-${actDateUTC.slice(8,10)}`
+                      let [year, month, day] = newSelectedDate
+                        .toISOString()
+                        .slice(0, 10)
+                        .split("-");
+                      let selectedDateFormatted = `${year}-${month}-${day - 1}`; // Formato YYYY-MM-DD
+                      let textSelectedDate = `${actDateUTC.slice(
+                        0,
+                        4
+                      )}-${actDateUTC.slice(5, 7)}-${actDateUTC.slice(8, 10)}`;
                       // console.log('Act Date Formatted:', textSelectedDate);
                       // console.log('Selected Date Formatted:', selectedDateFormatted);
 
@@ -242,27 +283,29 @@ function Schedule() {
                       //     console.log("Las fechas no coinciden.");
                       // }
 
-                      return (
-                        textSelectedDate == selectedDateFormatted
-                      );
+                      return textSelectedDate == selectedDateFormatted;
                     })
                     .map((obj, idx) => (
                       <tr key={idx} className="border-4  border-opac p-4">
-                        {
-                          obj.ActivityAudioURL ? (
+                        {obj.ActivityAudioURL ? (
                           <td className="border-opac p-4 text-center mx-0 my-auto">
-                             <audio controls>
-                              <source src={obj.ActivityAudioURL } type="audio/mpeg" />
+                            <audio controls>
+                              <source
+                                src={obj.ActivityAudioURL}
+                                type="audio/mpeg"
+                              />
                               Your browser doesnt support audio controls
                             </audio>
                           </td>
-                          ) : (
-
-                          <td className={`border-opac p-4 text-center font-sans text-dark ${obj.IsCompleted ? 'line-through' : ''}`}>
+                        ) : (
+                          <td
+                            className={`border-opac p-4 text-center font-sans text-dark ${
+                              obj.IsCompleted ? "line-through" : ""
+                            }`}
+                          >
                             {obj.ActivityDesc}
                           </td>
-                          )
-                        }
+                        )}
                         <td className="border-opac p-4 text-center border">
                           <span
                             className={`border-opac p-4 text-center rounded-md text-white font-bold ${
@@ -279,20 +322,26 @@ function Schedule() {
                           </span>
                         </td>
                         <td className="border-opac p-4 text-center border">
-                          <span className="font-sans font-semibold text-darker-light">{obj.HourToDo}</span>
+                          <span className="font-sans font-semibold text-darker-light">
+                            {obj.HourToDo}
+                          </span>
                         </td>
                         <td className="border-opac p-4 text-center mx-auto my-0 border">
-                          {
-                            obj.IsCompleted === 0 ? (
-
-                          <button 
-                              onClick={(e)=>handleCompleteActivity(e,obj)}
-                            className="flex justify-center items-center space-x-2 hover:bg-green-500 max-w-48 transition-all delay-150 ease-linear bg-gray-600 text-white rounded-md p-3 font-semibold text-center">
-                            <span>Mark As Completed</span>  <span className="text-white text-center">{CheckIcon()}</span> 
-                          </button>
-                            ) :
-                            <span className="p-4 bg-green-500 text-white rounded-lg font-semibold">DONE</span>
-                          }
+                          {obj.IsCompleted === 0 ? (
+                            <button
+                              onClick={(e) => handleCompleteActivity(e, obj)}
+                              className="flex justify-center items-center space-x-2 hover:bg-green-500 max-w-48 transition-all delay-150 ease-linear bg-gray-600 text-white rounded-md p-3 font-semibold text-center"
+                            >
+                              <span>Mark As Completed</span>{" "}
+                              <span className="text-white text-center">
+                                {CheckIcon()}
+                              </span>
+                            </button>
+                          ) : (
+                            <span className="p-4 bg-green-500 text-white rounded-lg font-semibold">
+                              DONE
+                            </span>
+                          )}
                         </td>
                       </tr>
                     ))}
@@ -382,7 +431,7 @@ function Schedule() {
               <></>
             )}
           </div>
-          <button className="bg-red-500 m-5 text-white rounded-2xl w-1/2 mx-auto p-2">
+          <button className="bg-red-500 m-5 text-white rounded-2xl w-1/2 mx-auto p-2" onClick={()=>finishDay(currentActivitiesDay[0].AgendaId)}>
             Finish day
           </button>
         </div>
