@@ -7,6 +7,14 @@ import { toast } from "react-toastify";
 import { ActivitiesEndpoint } from "../utils/EndpointExporter";
 import TimeReminder from "../components/TimeReminder";
 
+// Función auxiliar para formatear fechas
+const formatCalendarDate = (date) => {
+  if (!date) return null;
+  const localDate = new Date(date);
+  localDate.setMinutes(localDate.getMinutes() + localDate.getTimezoneOffset());
+  return localDate;
+};
+
 function Schedule() {
   const [selectedDate, setSelectedDate] = useState(null);
   const [recording, setRecording] = useState(false);
@@ -32,12 +40,12 @@ function Schedule() {
     recorder.onstop = () => {
       const blob = new Blob(chunks, { type: "audio/wav" });
       setAudioBlob(blob);
-      setAudioURL(URL.createObjectURL(blob)); // Crear URL temporal para reproducir el audio
+      setAudioURL(URL.createObjectURL(blob));
     };
 
     recorder.start();
   };
-  //Restore States
+
   const handleRestoreAct = () => {
     setActivity("");
     setAudioURL(null);
@@ -47,7 +55,6 @@ function Schedule() {
     setPriority(0);
   };
 
-  //Stop recording
   const handleStopRecording = () => {
     if (recording) {
       recording.stop();
@@ -55,15 +62,12 @@ function Schedule() {
     }
   };
 
-  //Submit the record
   const handleSubmmitActivity = async (e, date) => {
     e.preventDefault();
     try {
       let URLA;
       if (audioBlob) {
-        //Insert Record and get AUDIO URL
         let NameActAudio = `${Date.now()}${user.name}${activityTime}`;
-        //Try upload audio
         URLA = await uploadAudio(audioBlob, { user: user.name }, NameActAudio);
         console.log(URLA);
       }
@@ -79,7 +83,7 @@ function Schedule() {
           activityTime: activityTime,
           priority: Number(priority),
           scheduleDate: date,
-          timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone, // Agregar el timezone
+          timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
         }),
       });
       const data = await res.json();
@@ -110,8 +114,6 @@ function Schedule() {
       } else {
         toast.error("Can not mark as complete this activity...");
       }
-
-      console.log(actObject);
     } catch (e) {
       console.log(e);
       toast.error("Can not mark as complete this activity...");
@@ -120,12 +122,37 @@ function Schedule() {
     }
   };
 
+  // Función auxiliar para normalizar fechas
+  const normalizeDateToUTC = (date) => {
+    if (typeof date === "string") {
+      date = new Date(date);
+    }
+    return new Date(
+      Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())
+    );
+  };
+
+  // Función para filtrar actividades por fecha
+  const filterActivitiesByDate = (activities, selectedDate) => {
+    if (!selectedDate || !activities?.length) return [];
+    
+    const normalizedSelectedDate = normalizeDateToUTC(selectedDate);
+    const selectedDateString = normalizedSelectedDate.toISOString().split("T")[0];
+
+    return activities.filter((activity) => {
+      const activityDate = normalizeDateToUTC(activity.DateAgenda);
+      const activityDateString = activityDate.toISOString().split("T")[0];
+      return activityDateString === selectedDateString;
+    });
+  };
+
+  // Función actualizada para obtener días del calendario
   const getCalendarDays = () => {
     const today = new Date();
     return Array.from({ length: 7 }, (_, i) => {
       const day = new Date(today);
       day.setDate(today.getDate() + i);
-      return day;
+      return normalizeDateToUTC(day);
     });
   };
 
@@ -151,20 +178,17 @@ function Schedule() {
     }
   };
 
+
   useEffect(() => {
-    //CURRENT STATE OF ACTIVITIES
     const fetchActivities = async () => {
       try {
-        const res = await fetch(
-          `${ActivitiesEndpoint}/getActivitiesBySchedule`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${localStorage.getItem("userToken")}`,
-            },
-          }
-        );
+        const res = await fetch(`${ActivitiesEndpoint}/getActivitiesBySchedule`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("userToken")}`,
+          },
+        });
         const data = await res.json();
         console.log(data);
         setCurrentActivitiesDay(data);
@@ -175,40 +199,42 @@ function Schedule() {
     };
     fetchActivities();
   }, [updater]);
+
   return (
     <div className="flex flex-col w-full mx-auto p-6 bg-minimal rounded-md">
       <h1 className="text-3xl font-bold text-dark mb-4">TO DO List</h1>
 
       <div className="w-full overflow-x-auto">
         <div className="grid grid-cols-7 gap-4 mb-6 min-w-max">
-          {getCalendarDays().map((day, idx) => (
-            <button
-              key={idx}
-              className={`p-4 text-center rounded-lg ${
-                selectedDate === day
-                  ? "bg-plus-min text-white"
-                  : "bg-opac text-white"
-              } transition-all hover:bg-plus-min`}
-              onClick={() => {
-                setSelectedDate(day);
-              }}
-            >
-              <div className="font-bold">
-                {daysOfWeek[(todayIndex + idx) % 7]}{" "}
-                {/* Muestra el nombre correcto del día */}
-              </div>
-              <div>{day.getDate()}</div>
-            </button>
-          ))}
+          {getCalendarDays().map((day, idx) => {
+            const formattedDay = formatCalendarDate(day);
+            return (
+              <button
+                key={idx}
+                className={`p-4 text-center rounded-lg ${
+                  selectedDate?.toISOString().split("T")[0] ===
+                  day.toISOString().split("T")[0]
+                    ? "bg-plus-min text-white"
+                    : "bg-opac text-white"
+                } transition-all hover:bg-plus-min`}
+                onClick={() => setSelectedDate(day)}
+              >
+                <div className="font-bold">
+                  {daysOfWeek[(todayIndex + idx) % 7]}{" "}
+                </div>
+                <div>{formattedDay.getDate()}</div>
+              </button>
+            );
+          })}
         </div>
       </div>
 
       {selectedDate && (
         <div className="bg-darker-light p-4 rounded-lg mb-6">
           <h2 className="text-2xl text-white mb-4">
-            Schedule to {new Date(selectedDate).toLocaleDateString()}
+            Schedule to {formatCalendarDate(selectedDate).toLocaleDateString()}
           </h2>
-          <TimeReminder selectedDate={selectedDate} />
+          <TimeReminder selectedDate={formatCalendarDate(selectedDate)} />
           <div
             className={`flex items-center overflow-x-auto bg-darker-light  mt-3 
             ${currentActivitiesDay.length == 0 && "hidden"}`}
@@ -216,9 +242,7 @@ function Schedule() {
             <table className="w-full overflow-x-auto rounded-sm">
               <thead>
                 <tr className="text-minimal text-lg bg-darker-light">
-                  <th className="min-w-[200px] md:min-w-[400px]">
-                    Activity Desc
-                  </th>
+                  <th className="min-w-[200px] md:min-w-[400px]">Activity Desc</th>
                   <th className="py-2">Priority</th>
                   <th className="py-2">Hour to Do</th>
                   <th className="py-2">Actions</th>
@@ -310,12 +334,12 @@ function Schedule() {
                           <span
                             className={`border-opac p-4 text-center rounded-md text-white font-bold ${
                               obj.Priority === 1
-                                ? "bg-red-500 text-white" // Urgente
+                                ? "bg-red-500 text-white"
                                 : obj.Priority === 2
-                                ? "bg-yellow-500 text-black" // Media
+                                ? "bg-yellow-500 text-black"
                                 : obj.Priority === 3
-                                ? "bg-green-500 text-white" // Baja
-                                : "bg-gray-300 text-gray-700" // Desconocido
+                                ? "bg-green-500 text-white"
+                                : "bg-gray-300 text-gray-700"
                             }`}
                           >
                             {getPriorityLabel(obj.Priority)}
@@ -344,12 +368,13 @@ function Schedule() {
                           )}
                         </td>
                       </tr>
-                    ))}
+                    )
+                  )}
               </tbody>
             </table>
           </div>
           <div className="flex items-center overflow-x-auto">
-            {activity == "" && ( //Allow record audio
+            {activity == "" && (
               <button
                 onClick={handleRecording}
                 className={`bg-minimal text-center rounded-full p-2 m-2 ${
@@ -406,14 +431,14 @@ function Schedule() {
             <input
               type="time"
               className="border border-gray-300 p-2 rounded-md"
-              value={activityTime} // Estado para manejar la hora
-              onChange={(e) => setActivityTime(e.target.value)} // Manejar el cambio
+              value={activityTime}
+              onChange={(e) => setActivityTime(e.target.value)}
             />
             <button
               onClick={(e) =>
                 handleSubmmitActivity(
                   e,
-                  new Date(selectedDate).toLocaleDateString()
+                  formatCalendarDate(selectedDate).toLocaleDateString()
                 )
               }
               className="bg-dark text-white px-4 py-2 rounded-md ml-2 hover:bg-green-500/90 transition-colors"
@@ -437,8 +462,8 @@ function Schedule() {
         </div>
       )}
       <p className="font-medium text-gray-600 font-sans">
-        Note: If you dont close the day will be closed automatically at 12:00am
-        and the completition of your activities will be calculated with the data
+        Note: If you dont close the day will be closed automatically at 12:00am and
+        the completition of your activities will be calculated with the data
         available at the moment ;)
       </p>
     </div>
