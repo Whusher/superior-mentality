@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import  { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ContentLA from '../../layouts/ContentLA'; // Importa ContentLA
 
-const ActivityList = () => {
+function ActivityView(){
   const [activities, setActivities] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -32,7 +32,7 @@ const ActivityList = () => {
   if (loading) return <div>Cargando...</div>;
   if (error) return <div>Error: {error}</div>;
 
-  const activityContent = (
+  return (
     <div className="container mx-auto px-4 py-6">
       <h1 className="text-3xl font-bold text-center mb-6 text-minimal">Actividades</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -54,8 +54,11 @@ const ActivityList = () => {
       </div>
     </div>
   );
+}
 
-  return <ContentLA child={activityContent} />;
+
+const ActivityList = () => {
+  return <ContentLA child={<ActivityView/>} />;
 };
 
 export default ActivityList;

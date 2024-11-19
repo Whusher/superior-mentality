@@ -23,6 +23,8 @@ import Profile from "./user/Profile.jsx";
 import Subscription from "./user/Subscription.jsx";
 import Thankyou from "./user/Thankyou.jsx";
 import Records from "./user/Records.jsx";
+import History from "./user/History"
+
 
 // src/App.jsx
 import { AuthProvider } from './context/AuthContext';
@@ -47,6 +49,7 @@ function App() {
           />
             <Route path="/schedule" element={<Schedule />} />
             <Route path="/activities" element={<ProtectedRoute> <ActividadesList /> </ProtectedRoute>} />
+            <Route path="/history" element={<ProtectedRoute> <History/> </ProtectedRoute>} />
             <Route path="/actividades/ColorSequence" element={<ProtectedRoute> <ColorSequence /> </ProtectedRoute>} />
             <Route path="/actividades/DrawingGame" element={<ProtectedRoute> <DrawingGame /> </ProtectedRoute>} />
             <Route path="/actividades/FruitCatcher" element={<ProtectedRoute> <FruitCatcher /> </ProtectedRoute>} />

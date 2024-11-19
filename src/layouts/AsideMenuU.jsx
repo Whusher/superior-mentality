@@ -8,8 +8,9 @@ const menuOps = [
   { icon: News, menuOption: "Schedule", pageRef: "/schedule" },
   { icon: User, menuOption: "Profile", pageRef: "/profile" },
   { icon: Records, menuOption: "Records", pageRef: "/records" },
-  { icon: History, menuOption: "History", pageRef: "/History" },
   { icon: Suscription, menuOption: "Suscription", pageRef: "/subscription" },
+  { icon: Records, menuOption: "Records", pageRef: "/profile" },
+  { icon: History, menuOption: "History", pageRef: "/history" },
 ];
 
 export default function AsideMenuU({ options = menuOps }) {

@@ -3,7 +3,7 @@ export const AuthEndpoint = 'https://users-managment-one.vercel.app/user';
 export const ResetEndpoint = 'https://users-managment-one.vercel.app'
 
 //LOCAL
-export const ActivitiesEndpoint = 'http://localhost:4321/activities'
+
 export const MusicEndpoint = `http://localhost:4321/update-music`;
 export const ProfileEndpoint = `http://localhost:4321/profile`;
 export const ProfileImageEndpoint = `http://localhost:4321/update-profile-image`;
@@ -20,5 +20,7 @@ export const UpdateScoreEndpoint = `http://localhost:4321/update-score`;
 export const TopActivitiesEndpoint = `http://localhost:4321/top-activities`;
 export const GraphRecordsEndpoint = `http://localhost:4321/activities-scores-graph`;
 
+export const ActivitiesEndpoint = 'https://activity-services-whusher-whushers-projects.vercel.app/activities'
+// export const ActivitiesEndpoint = 'http://localhost:4321/activities'
 // export const AuthEndpoint = 'http://localhost:1234/user';
 // export const ResetEndpoint = 'http://localhost:1234'
