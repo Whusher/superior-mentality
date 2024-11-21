@@ -13,7 +13,7 @@ const ActivityChart = () => {
   const fetchData = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:4321/api/activities/percentage`,
+        `https://activity-services-whusher-whushers-projects.vercel.app/api/activities/percentage`,
         {
           params: { startDate, endDate },
           headers: {
@@ -58,8 +58,8 @@ const ActivityChart = () => {
   }
 
   return (
-    <div className="rounded-lg bg-white">
-      <div className="w-[900px] p-4">
+    <div className="rounded-lg bg-white flex flex-col md:block">
+      <div className="md:w-[900px] p-4 w-[400px] ">
         <h2>Porcentaje de Actividades Completadas Manualmente</h2>
         <div className="mb-4">
           <label className="mr-2">Inicio:</label>
@@ -81,7 +81,7 @@ const ActivityChart = () => {
         </div>
         <Line data={chartData} />
       </div>
-      <div className="w-[900px] mt-7 p-4">
+      <div className="md:w-[900px]  w-[400px] mt-7 p-4">
         <h2>Activities Closed vs Incomplete</h2>
         <ActivityComparisonChart startDate={startDate} endDate={endDate} />
       </div>
@@ -95,7 +95,7 @@ const ActivityComparisonChart = ({ startDate, endDate }) => {
   const fetchData = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:4321/api/activities/percentage`,
+        `https://activity-services-whusher-whushers-projects.vercel.app/api/activities/percentage`,
         {
           params: { startDate, endDate },
           headers: {
