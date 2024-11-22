@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import ContentLA from "../layouts/ContentLA";
 import './profile.css';
 import { OptionsColorsEndpoint, ColorsEndpoint } from '../utils/EndpointExporter';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const EditProfileColors = () => {
   const [colorOptions, setColorOptions] = useState([]);
@@ -12,12 +14,13 @@ const EditProfileColors = () => {
   useEffect(() => {
     const fetchOptions = async () => {
       try {
-        const colorsRes = await fetch(OptionsColorsEndpoint);
+        const token = localStorage.getItem('userToken');
+        const colorsRes = await fetch(`${OptionsColorsEndpoint}?token=${token}`);
         const colorsData = await colorsRes.json();
         setColorOptions(colorsData);
       } catch (error) {
         console.error('Error loading options:', error);
-        alert('Error loading options. Please try again.');
+        toast.error('Error loading options. Please try again.');
       }
     };
 
@@ -47,16 +50,14 @@ const EditProfileColors = () => {
       });
   
       if (!response.ok) throw new Error('Error updating preferences.');
-      alert('Preferences updated successfully.');
+      toast.success('Preferences updated successfully.');
       navigate('/profile');
     } catch (error) {
       console.error('Error saving changes:', error);
-      alert('Error saving changes. Please try again.');
+      toast.error('Error saving changes. Please try again.');
     }
   };
   
-  
-
   return (
     <div className="edit-profile-container">
       <h2>Edit Profile</h2>

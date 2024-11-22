@@ -167,3 +167,111 @@
   from { opacity: 0; }
   to { opacity: 1; }
 }
+
+
+
+/*Failure.jsx*/
+.failure-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  color: #FFFFFF;
+  font-family: Arial, sans-serif;
+}
+
+.failure-content {
+  text-align: center;
+  background-color: #1D2C40;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+  max-width: 400px;
+  width: 90%;
+}
+
+.failure-title {
+  font-size: 2rem;
+  color: #BDD9F2;
+  margin-bottom: 10px;
+}
+
+.failure-message {
+  font-size: 1.1rem;
+  color: #8BADD9;
+  margin-bottom: 20px;
+}
+
+.retry-button {
+  background-color: #3D5473;
+  color: #FFFFFF;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.retry-button:hover {
+  background-color: #8BADD9;
+}
+
+.retry-button:focus {
+  outline: none;
+  box-shadow: 0px 0px 5px #BDD9F2;
+}
+
+
+/*pending*/
+
+.pending-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  color: #FFFFFF;
+  font-family: Arial, sans-serif;
+}
+
+.pending-content {
+  text-align: center;
+  background-color: #1D2C40; 
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+  max-width: 400px;
+  width: 90%;
+}
+
+.pending-title {
+  font-size: 2rem;
+  color: #BDD9F2;
+  margin-bottom: 10px;
+}
+
+.pending-message {
+  font-size: 1.1rem;
+  color: #8BADD9;
+  margin-bottom: 20px;
+}
+
+.retry-button {
+  background-color: #3D5473; 
+  color: #FFFFFF;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.retry-button:hover {
+  background-color: #8BADD9; 
+}
+
+.retry-button:focus {
+  outline: none;
+  box-shadow: 0px 0px 5px #BDD9F2; 
+}

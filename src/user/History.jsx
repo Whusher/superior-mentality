@@ -3,15 +3,15 @@ import { Line, Bar } from "react-chartjs-2";
 import axios from "axios";
 import "chart.js/auto"; // Necesario para que Chart.js funcione correctamente
 import ContentLA from "../layouts/ContentLA";
-import { CheckSubscriptionEndpoint } from '../utils/EndpointExporter';
-import { useNavigate } from 'react-router-dom';
+import {CheckSubscriptionEndpoint } from '../utils/EndpointExporter';
+
 
 const ActivityChart = () => {
   const [chartData, setChartData] = useState(null);
   const [startDate, setStartDate] = useState("2024-11-05");
   const [endDate, setEndDate] = useState("2024-11-16");
   const [subscriptionInfo, setSubscriptionInfo] = useState(null); // Estado para la suscripción
-  const navigate = useNavigate();
+
   const fetchData = async () => {
     try {
       const response = await axios.get(
@@ -88,13 +88,18 @@ const ActivityChart = () => {
           </p>
           <button
             className="mt-6 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors duration-200"
-            onClick={() => navigate('/subscription')} 
+            onClick={() => window.location.href = "/subscription"} 
           >
             Suscribirme Ahora
           </button>
         </div>
       </div>
     );
+  }
+  
+
+  if (!chartData) {
+    return <p>Cargando datos...</p>;
   }
 
   return (

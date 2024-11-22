@@ -25,6 +25,8 @@ import Thankyou from "./user/Thankyou.jsx";
 import Records from "./user/Records.jsx";
 import History from "./user/History"
 import ViewGraphRecords from "./user/GraphRecords.jsx";
+import Failure from "./user/Failure"
+import Pending from "./user/Pending"
 
 
 // src/App.jsx
@@ -65,6 +67,8 @@ function App() {
             <Route path="/subscription" element={<ProtectedRoute><Subscription /></ProtectedRoute>} />
             <Route path="/thankyou" element={<ProtectedRoute><Thankyou /></ProtectedRoute>} />
             <Route path="/records" element={<ProtectedRoute><Records /></ProtectedRoute>} />
+            <Route path="/failure" element={<ProtectedRoute><Failure /></ProtectedRoute>} />
+            <Route path="/pending" element={<ProtectedRoute><Pending /></ProtectedRoute>} />
           <Route path="*" element={<Error404 />} />
         </Routes>
       </Router>
