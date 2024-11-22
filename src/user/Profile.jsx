@@ -112,10 +112,6 @@ const Profile = () => {
           />
         </div>
       </div>
-
-      <div className="profile-buttons">
-        <button className="profile-button back" onClick={() => navigate(-1)}>Back</button>
-      </div>
     </div>
   );
 };

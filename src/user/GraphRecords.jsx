@@ -15,7 +15,8 @@ const GraphRecords = () => {
 
   const fetchData = async () => {
     try {
-      const response = await fetch(GraphRecordsEndpoint);
+      const token = localStorage.getItem('userToken');
+      const response = await fetch(`${GraphRecordsEndpoint}?token=${token}`);
       const result = await response.json();
       setData(result);
     } catch (err) {
