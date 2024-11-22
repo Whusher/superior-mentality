@@ -82,7 +82,7 @@ const Subscription = () => {
       <div className="subscription-card">
         <h2 className="subscription-title">Plan de Suscripción</h2>
         <p className="subscription-description">
-          Obtén gráficos de regresión lineal y recibe tus gráficos directamente en tu correo en formato PDF.
+        Analiza el progreso de tus actividades con gráficos interactivos que muestran el porcentaje de tareas completadas.
         </p>
         {subscriptionInfo ? (
           <div>

@@ -3,7 +3,7 @@ import { Brainly,HandClick,User,News} from "../utils/SVGExporter"
 import DropDownMenu from "./DropDownMenu";
 
 
-export default function AsideMenuG({options = [ {icon: HandClick, menuOption: "Suscribe", pageRef:"/suscription" },{icon: User, menuOption: "Login" , pageRef:"/login" } , {icon: News, menuOption: "News", pageRef:"/news" }]}) {
+export default function AsideMenuG({options = [ {icon: HandClick,menuOption: "Register", pageRef:"/signup"},{icon: User, menuOption: "Login" , pageRef:"/login" } , {icon: News, menuOption: "News", pageRef:"/news" }]}) {
   return (
     <aside className="col-span-2 bg-darker-light md:min-h-screen p-5 flex justify-between md:block"> 
         <h3 className="text-minimal text-center text-2xl md:my-5">Superior Mentality {Brainly()}</h3>
@@ -20,7 +20,7 @@ export default function AsideMenuG({options = [ {icon: HandClick, menuOption: "S
           }
         </ul>
         <div className="md:hidden">
-          <DropDownMenu options={[ {icon: HandClick, menuOption: "Suscribe", pageRef:"/suscription" },{icon: User, menuOption: "Login" , pageRef:"/login" } , {icon: News, menuOption: "News", pageRef:"/news" }]} title={"Menu"}/>
+          <DropDownMenu options={[ {icon: HandClick, menuOption: "Register", pageRef:"/signup" },{icon: User, menuOption: "Login" , pageRef:"/login" } , {icon: News, menuOption: "News", pageRef:"/news" }]} title={"Menu"}/>
         </div>
     </aside>
   )

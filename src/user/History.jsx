@@ -2,14 +2,16 @@ import { useEffect, useState } from "react";
 import { Line, Bar } from "react-chartjs-2";
 import axios from "axios";
 import "chart.js/auto"; // Necesario para que Chart.js funcione correctamente
-// import { ActivitiesEndpoint } from "../utils/EndpointExporter";
 import ContentLA from "../layouts/ContentLA";
+import { CheckSubscriptionEndpoint } from '../utils/EndpointExporter';
+import { useNavigate } from 'react-router-dom';
 
 const ActivityChart = () => {
   const [chartData, setChartData] = useState(null);
   const [startDate, setStartDate] = useState("2024-11-05");
   const [endDate, setEndDate] = useState("2024-11-16");
-
+  const [subscriptionInfo, setSubscriptionInfo] = useState(null); // Estado para la suscripción
+  const navigate = useNavigate();
   const fetchData = async () => {
     try {
       const response = await axios.get(
@@ -43,7 +45,29 @@ const ActivityChart = () => {
     }
   };
 
+  const checkSubscription = async () => {
+    const token = localStorage.getItem("userToken");
+    if (!token) return;
+
+    try {
+      const response = await fetch(`${CheckSubscriptionEndpoint}?token=${token}`);
+      const data = await response.json();
+
+      if (data.hasSubscription) {
+        setSubscriptionInfo({
+          startDate: new Date(data.startDate).toLocaleDateString(),
+          endDate: new Date(data.endDate).toLocaleDateString(),
+        });
+      } else {
+        setSubscriptionInfo(null);
+      }
+    } catch (error) {
+      console.error("Error al verificar la suscripción:", error);
+    }
+  };
+
   useEffect(() => {
+    checkSubscription();
     fetchData();
   }, [startDate, endDate]);
 
@@ -53,8 +77,24 @@ const ActivityChart = () => {
     if (name === "endDate") setEndDate(value);
   };
 
-  if (!chartData) {
-    return <p>Cargando datos...</p>;
+  if (!subscriptionInfo) {
+    return (
+      <div className="flex justify-center items-center min-h-screen ">
+        <div className="max-w-md w-full bg-white shadow-lg rounded-lg p-6 text-center">
+          <h2 className="text-2xl font-bold text-blue-600">¡Acceso Restringido!</h2>
+          <p className="mt-4 text-gray-700">
+            No tienes una suscripción activa para acceder a esta funcionalidad. 
+            Suscríbete ahora y desbloquea todos los beneficios exclusivos.
+          </p>
+          <button
+            className="mt-6 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors duration-200"
+            onClick={() => navigate('/subscription')} 
+          >
+            Suscribirme Ahora
+          </button>
+        </div>
+      </div>
+    );
   }
 
   return (
