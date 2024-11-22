@@ -292,13 +292,13 @@ function Schedule() {
                         .toISOString()
                         .slice(0, 10)
                         .split("-");
-                      let selectedDateFormatted = `${year}-${month}-${day - 1}`; // Formato YYYY-MM-DD
+                      let selectedDateFormatted = `${year}-${month}-${day }`; // Formato YYYY-MM-DD
                       let textSelectedDate = `${actDateUTC.slice(
                         0,
                         4
                       )}-${actDateUTC.slice(5, 7)}-${actDateUTC.slice(8, 10)}`;
-                      // console.log('Act Date Formatted:', textSelectedDate);
-                      // console.log('Selected Date Formatted:', selectedDateFormatted);
+                      console.log('Act Date Formatted:', textSelectedDate);
+                      console.log('Selected Date Formatted:', selectedDateFormatted);
 
                       // // Comparar solo la parte de la fecha (YYYY-MM-DD)
                       // if (textSelectedDate === selectedDateFormatted) {
