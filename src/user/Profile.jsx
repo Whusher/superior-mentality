@@ -36,8 +36,7 @@ const Profile = () => {
   useEffect(() => {
     const fetchUser = async () => {
       const token = localStorage.getItem('userToken'); 
-      console.log(token);
-      
+
       try {
         const response = await fetch(`${ProfileEndpoint}?token=${token}`, { method: 'GET' });
 
@@ -56,7 +55,6 @@ const Profile = () => {
   }, [navigate]);
   const profilePhoto = imagesMap[profileData?.profile_image_id];
 
-  console.log(profilePhoto);
   
 
   return (
@@ -113,10 +111,6 @@ const Profile = () => {
             onClick={() => navigate('/editProfileMusic')}
           />
         </div>
-      </div>
-
-      <div className="profile-buttons">
-        <button className="profile-button back" onClick={() => navigate(-1)}>Back</button>
       </div>
     </div>
   );

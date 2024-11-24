@@ -4,6 +4,9 @@ import ContentLA from "../layouts/ContentLA";
 import './profile.css';
 import { OptionsProfileImageEndpoint, ProfileImageEndpoint } from '../utils/EndpointExporter';
 
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 import photo1 from '../assets/1ip.png';
 import photo2 from '../assets/2ip.png';
 import photo3 from '../assets/3ip.png';
@@ -34,13 +37,13 @@ const EditProfileImage = () => {
   useEffect(() => {
     const fetchOptions = async () => {
       try {
-        const imagesRes = await fetch(OptionsProfileImageEndpoint); 
+        const token = localStorage.getItem('userToken');
+        const imagesRes = await fetch(`${OptionsProfileImageEndpoint}?token=${token}`);
         const imagesData = await imagesRes.json();
-        console.log('Datos de las imágenes recibidas:', imagesData); 
         setProfileImages(imagesData);
       } catch (error) {
         console.error('Error loading options:', error);
-        alert('Error loading options. Please try again.');
+        toast.error('Error loading profile image options. Please try again.');
       }
     };
 
@@ -53,14 +56,19 @@ const EditProfileImage = () => {
 
   const handleSaveChanges = async () => {
     const token = localStorage.getItem('userToken');
-    
+
     console.log('Token:', token);
-    
+
     if (!token) {
+      toast.error('Session expired. Please log in again.');
       navigate('/login');
       return;
     }
-  
+    if (!selectedImageId) {
+      toast.error('Please select a profile picture before saving.');
+      return;
+    }
+
     try {
       const response = await fetch(`${ProfileImageEndpoint}?token=${token}`, {
         method: 'POST',
@@ -71,16 +79,15 @@ const EditProfileImage = () => {
           id_profile_image: selectedImageId,
         }),
       });
-  
+
       if (!response.ok) throw new Error('Error updating profile image.');
-      alert('Profile image updated successfully.');
+      toast.success('Profile image updated successfully.');
       navigate('/profile');
     } catch (error) {
       console.error('Error saving changes:', error);
-      alert('Error saving changes. Please try again.');
+      toast.error('Error saving profile image. Please try again.');
     }
   };
-  
 
   return (
     <div className="edit-profile-container">
@@ -89,18 +96,18 @@ const EditProfileImage = () => {
       <div className="form-group">
         <label>Select Your Profile Image:</label>
         <div className="checkbox-group">
-        {profileImages.map(image => (
-  <div key={image.id_image} className="profile-image">
-    <input
-      type="radio"
-      name="profileImage"
-      value={image.id_image}
-      checked={selectedImageId === image.id_image}
-      onChange={() => handleImageSelection(image.id_image)}
-    />
-    <img src={imagesMap[image.id_image]} alt="Profile" />
-  </div>
-))}
+          {profileImages.map(image => (
+            <div key={image.id_image} className="profile-image">
+              <input
+                type="radio"
+                name="profileImage"
+                value={image.id_image}
+                checked={selectedImageId === image.id_image}
+                onChange={() => handleImageSelection(image.id_image)}
+              />
+              <img src={imagesMap[image.id_image]} alt="Profile" />
+            </div>
+          ))}
         </div>
       </div>
 

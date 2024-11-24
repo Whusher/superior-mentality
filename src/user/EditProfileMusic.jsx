@@ -4,8 +4,10 @@ import ContentLA from "../layouts/ContentLA";
 import './profile.css';
 import { OptionsMusicEndpoint, MusicEndpoint } from '../utils/EndpointExporter';
 
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 const EditProfileMusic = () => {
-  
   const [musicOptions, setMusicOptions] = useState([]);
   const [selectedMusic, setSelectedMusic] = useState([]);
   const navigate = useNavigate();
@@ -13,13 +15,13 @@ const EditProfileMusic = () => {
   useEffect(() => {
     const fetchOptions = async () => {
       try {
-        const musicRes = await fetch(OptionsMusicEndpoint); 
+        const token = localStorage.getItem('userToken');
+        const musicRes = await fetch(`${OptionsMusicEndpoint}?token=${token}`);
         const musicData = await musicRes.json();
-
         setMusicOptions(musicData);
       } catch (error) {
         console.error('Error loading options:', error);
-        alert('Error loading options. Please try again.');
+        toast.error('Error loading music options. Please try again.');
       }
     };
 
@@ -36,8 +38,13 @@ const EditProfileMusic = () => {
 
   const handleSaveChanges = async () => {
     const token = localStorage.getItem('userToken');
-    console.log(token);
-    
+
+    if (!token) {
+      toast.error('Session expired. Please log in again.');
+      navigate('/login');
+      return;
+    }
+
     try {
       const response = await fetch(`${MusicEndpoint}?token=${token}`, {
         method: 'POST',
@@ -45,20 +52,18 @@ const EditProfileMusic = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          genres: selectedMusic 
+          genres: selectedMusic,
         }),
       });
-      
+
       if (!response.ok) throw new Error('Error updating preferences.');
-      alert('Preferences updated successfully.');
+      toast.success('Music preferences updated successfully.');
       navigate('/profile');
     } catch (error) {
       console.error('Error saving changes:', error);
-      alert('Error saving changes. Please try again.');
+      toast.error('Error saving preferences. Please try again.');
     }
   };
-  
-  
 
   return (
     <div className="edit-profile-container">

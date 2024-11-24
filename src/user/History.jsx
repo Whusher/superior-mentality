@@ -2,18 +2,20 @@ import { useEffect, useState } from "react";
 import { Line, Bar } from "react-chartjs-2";
 import axios from "axios";
 import "chart.js/auto"; // Necesario para que Chart.js funcione correctamente
-// import { ActivitiesEndpoint } from "../utils/EndpointExporter";
 import ContentLA from "../layouts/ContentLA";
+import {CheckSubscriptionEndpoint } from '../utils/EndpointExporter';
+
 
 const ActivityChart = () => {
   const [chartData, setChartData] = useState(null);
   const [startDate, setStartDate] = useState("2024-11-05");
   const [endDate, setEndDate] = useState("2024-11-16");
+  const [subscriptionInfo, setSubscriptionInfo] = useState(null); // Estado para la suscripción
 
   const fetchData = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:4321/api/activities/percentage`,
+        `https://activity-services-whusher-whushers-projects.vercel.app/api/activities/percentage`,
         {
           params: { startDate, endDate },
           headers: {
@@ -43,7 +45,29 @@ const ActivityChart = () => {
     }
   };
 
+  const checkSubscription = async () => {
+    const token = localStorage.getItem("userToken");
+    if (!token) return;
+
+    try {
+      const response = await fetch(`${CheckSubscriptionEndpoint}?token=${token}`);
+      const data = await response.json();
+
+      if (data.hasSubscription) {
+        setSubscriptionInfo({
+          startDate: new Date(data.startDate).toLocaleDateString(),
+          endDate: new Date(data.endDate).toLocaleDateString(),
+        });
+      } else {
+        setSubscriptionInfo(null);
+      }
+    } catch (error) {
+      console.error("Error al verificar la suscripción:", error);
+    }
+  };
+
   useEffect(() => {
+    checkSubscription();
     fetchData();
   }, [startDate, endDate]);
 
@@ -53,13 +77,34 @@ const ActivityChart = () => {
     if (name === "endDate") setEndDate(value);
   };
 
+  if (!subscriptionInfo) {
+    return (
+      <div className="flex justify-center items-center min-h-screen ">
+        <div className="max-w-md w-full bg-white shadow-lg rounded-lg p-6 text-center">
+          <h2 className="text-2xl font-bold text-blue-600">¡Acceso Restringido!</h2>
+          <p className="mt-4 text-gray-700">
+            No tienes una suscripción activa para acceder a esta funcionalidad. 
+            Suscríbete ahora y desbloquea todos los beneficios exclusivos.
+          </p>
+          <button
+            className="mt-6 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors duration-200"
+            onClick={() => window.location.href = "/subscription"} 
+          >
+            Suscribirme Ahora
+          </button>
+        </div>
+      </div>
+    );
+  }
+  
+
   if (!chartData) {
     return <p>Cargando datos...</p>;
   }
 
   return (
-    <div className="rounded-lg bg-white md:block flex flex-col justify-center">
-      <div className="md:w-[900px] w-[400px] p-4 md:h-auto h-[600px]">
+    <div className="rounded-lg bg-white flex flex-col md:block">
+      <div className="md:w-[900px] p-4 w-[400px] ">
         <h2>Porcentaje de Actividades Completadas Manualmente</h2>
         <div className="mb-4">
           <label className="mr-2">Inicio:</label>
@@ -81,7 +126,7 @@ const ActivityChart = () => {
         </div>
         <Line data={chartData} />
       </div>
-      <div className="md:w-[900px] w-[400px] md:h-auto  h-[600px] mt-7 p-4">
+      <div className="md:w-[900px]  w-[400px] mt-7 p-4">
         <h2>Activities Closed vs Incomplete</h2>
         <ActivityComparisonChart startDate={startDate} endDate={endDate} />
       </div>
@@ -95,7 +140,7 @@ const ActivityComparisonChart = ({ startDate, endDate }) => {
   const fetchData = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:4321/api/activities/percentage`,
+        `https://activity-services-whusher-whushers-projects.vercel.app/api/activities/percentage`,
         {
           params: { startDate, endDate },
           headers: {

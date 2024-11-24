@@ -4,6 +4,9 @@ import ContentLA from "../layouts/ContentLA";
 import './profile.css';
 import { PreferencesEndpoint, OptionsPreferencesEndpoint } from '../utils/EndpointExporter';
 
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 const EditProfilePreferences = () => {
   const [preferenceOptions, setPreferenceOptions] = useState([]);
   const [selectedPreferences, setSelectedPreferences] = useState([]);
@@ -12,13 +15,13 @@ const EditProfilePreferences = () => {
   useEffect(() => {
     const fetchOptions = async () => {
       try {
-        const preferencesRes = await fetch(OptionsPreferencesEndpoint); // Use endpoint from `endpointexporter.jsx`
+        const token = localStorage.getItem('userToken');
+        const preferencesRes = await fetch(`${OptionsPreferencesEndpoint}?token=${token}`);
         const preferencesData = await preferencesRes.json();
-
         setPreferenceOptions(preferencesData);
       } catch (error) {
         console.error('Error loading options:', error);
-        alert('Error loading options. Please try again.');
+        toast.error('Error loading preferences. Please try again.');
       }
     };
 
@@ -35,14 +38,14 @@ const EditProfilePreferences = () => {
 
   const handleSaveChanges = async () => {
     const token = localStorage.getItem('userToken');
-    
+
     if (!token) {
+      toast.error('Session expired. Please log in again.');
       navigate('/login');
       return;
     }
-  
+
     try {
-      
       const response = await fetch(`${PreferencesEndpoint}?token=${token}`, {
         method: 'POST',
         headers: {
@@ -52,16 +55,16 @@ const EditProfilePreferences = () => {
           preferences: selectedPreferences,
         }),
       });
-  
+
       if (!response.ok) throw new Error('Error updating preferences.');
-      alert('Preferences updated successfully.');
+      toast.success('Preferences updated successfully.');
       navigate('/profile');
     } catch (error) {
       console.error('Error saving changes:', error);
-      alert('Error saving changes. Please try again.');
+      toast.error('Error saving preferences. Please try again.');
     }
   };
-  
+
   return (
     <div className="edit-profile-container">
       <h2>Edit Profile</h2>
