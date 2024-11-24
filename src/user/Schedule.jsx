@@ -158,7 +158,7 @@ function Schedule() {
 
   const finishDay = async (agendaId) => {
     try {
-      const response = await fetch("http://localhost:4321/finish-day", {
+      const response = await fetch("https://activity-services-whusher-whushers-projects.vercel.app/finish-day", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
