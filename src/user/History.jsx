@@ -4,10 +4,12 @@ import axios from "axios";
 import "chart.js/auto"; // Necesario para que Chart.js funcione correctamente
 import ContentLA from "../layouts/ContentLA";
 import {CheckSubscriptionEndpoint } from '../utils/EndpointExporter';
+import * as ss from "simple-statistics";
 
 
 const ActivityChart = () => {
   const [chartData, setChartData] = useState(null);
+  const [dataCopy, setDataCopy] = useState([]);
   const [startDate, setStartDate] = useState("2024-11-05");
   const [endDate, setEndDate] = useState("2024-11-16");
   const [subscriptionInfo, setSubscriptionInfo] = useState(null); // Estado para la suscripción
@@ -25,6 +27,7 @@ const ActivityChart = () => {
       );
 
       const data = response.data;
+      setDataCopy(data);
 
       setChartData({
         labels: data.map((item) => item.date),
@@ -128,63 +131,52 @@ const ActivityChart = () => {
       </div>
       <div className="md:w-[900px]  w-[400px] mt-7 p-4">
         <h2>Activities Closed vs Incomplete</h2>
-        <ActivityComparisonChart startDate={startDate} endDate={endDate} />
+        <ActivityComparisonChart startDate={startDate} endDate={endDate} data={dataCopy} />
+        <ExpectedRatio startDate={startDate} endDate={endDate} data={dataCopy} />
       </div>
     </div>
   );
 };
 
-const ActivityComparisonChart = ({ startDate, endDate }) => {
+const ActivityComparisonChart = ({ startDate, endDate, data }) => {
   const [chartData, setChartData] = useState(null);
 
-  const fetchData = async () => {
-    try {
-      const response = await axios.get(
-        `https://activity-services-whusher-whushers-projects.vercel.app/api/activities/percentage`,
-        {
-          params: { startDate, endDate },
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("userToken")}`,
-          },
-        }
-      );
-
-      const data = response.data;
-
-      // Procesar datos para actividades cerradas automáticamente
-      const processedData = data.map((item) => ({
-        date: new Date(item.date).toLocaleDateString(), // Formatear fecha
-        manualCompleted: parseInt(item.manualCompleted, 10),
-        autoClosed: item.totalActivities - parseInt(item.manualCompleted, 10),
-      }));
-
-      setChartData({
-        labels: processedData.map((item) => item.date),
-        datasets: [
-          {
-            label: "Completadas Manualmente",
-            data: processedData.map((item) => item.manualCompleted),
-            backgroundColor: "rgba(75,192,192,0.6)",
-            borderColor: "rgba(75,192,192,1)",
-            borderWidth: 1,
-          },
-          {
-            label: "Cerradas Automáticamente",
-            data: processedData.map((item) => item.autoClosed),
-            backgroundColor: "rgba(255,99,132,0.6)",
-            borderColor: "rgba(255,99,132,1)",
-            borderWidth: 1,
-          },
-        ],
-      });
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
-  };
-
+  
   useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // Procesar datos para actividades cerradas automáticamente
+        const processedData = data.map((item) => ({
+          date: new Date(item.date).toLocaleDateString(), // Formatear fecha
+          manualCompleted: parseInt(item.manualCompleted, 10),
+          autoClosed: item.totalActivities - parseInt(item.manualCompleted, 10),
+        }));
+  
+        setChartData({
+          labels: processedData.map((item) => item.date),
+          datasets: [
+            {
+              label: "Completadas Manualmente",
+              data: processedData.map((item) => item.manualCompleted),
+              backgroundColor: "rgba(75,192,192,0.6)",
+              borderColor: "rgba(75,192,192,1)",
+              borderWidth: 1,
+            },
+            {
+              label: "Cerradas Automáticamente",
+              data: processedData.map((item) => item.autoClosed),
+              backgroundColor: "rgba(255,99,132,0.6)",
+              borderColor: "rgba(255,99,132,1)",
+              borderWidth: 1,
+            },
+          ],
+        });
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
     fetchData();
-  }, [startDate, endDate]);
+  }, [startDate, endDate, data]);
 
   if (!chartData) {
     return <p>Cargando datos...</p>;
@@ -205,6 +197,112 @@ const ActivityComparisonChart = ({ startDate, endDate }) => {
     </div>
   );
 };
+
+
+
+const ExpectedRatio = ({ startDate, endDate, data }) => {
+  const [chartData, setChartData] = useState(null);
+  const [predictedPercentage, setPredictedPercentage] = useState(null);
+  const [regressionFormula, setRegressionFormula] = useState("");
+
+  useEffect(() => {
+    const processData = () => {
+      try {
+        // Procesar datos
+        const processedData = data.map((item) => ({
+          date: new Date(item.date).toLocaleDateString(), // Formatear fecha
+          manualCompleted: parseInt(item.manualCompleted, 10),
+          totalActivities: parseInt(item.totalActivities, 10),
+        }));
+
+        // Calcula porcentajes de actividades completadas manualmente
+        const percentages = processedData.map(
+          (item) => (item.manualCompleted / item.totalActivities) * 100 || 0
+        );
+
+        // Genera el eje x (índice de fechas) y eje y (porcentajes)
+        const x = percentages.map((_, index) => index); // Índices como valores de X
+        const y = percentages; // Porcentajes reales como valores de Y
+
+        // Aplica la regresión lineal
+        const regression = ss.linearRegression(
+          y.map((value, index) => [x[index], value])
+        );
+        const regressionLine = ss.linearRegressionLine(regression);
+
+        // Predice el siguiente porcentaje
+        const nextIndex = x.length; // Índice siguiente
+        const predicted = regressionLine(nextIndex); // Predicción
+
+        setPredictedPercentage(predicted.toFixed(2)); // Redondea la predicción
+
+        // Configura la fórmula de la regresión lineal: y = mx + b
+        const slope = regression.m.toFixed(4);
+        const intercept = regression.b.toFixed(2);
+        setRegressionFormula(`y = ${slope}x + ${intercept}`);
+
+        // Configura los datos para el gráfico
+        setChartData({
+          labels: processedData.map((item) => item.date),
+          datasets: [
+            {
+              label: "Completadas Manualmente (%)",
+              data: percentages,
+              backgroundColor: "rgba(75,192,192,0.6)",
+              borderColor: "rgba(75,192,192,1)",
+              borderWidth: 1,
+            },
+          ],
+        });
+      } catch (error) {
+        console.error("Error procesando datos:", error);
+      }
+    };
+
+    processData();
+  }, [startDate, endDate, data]);
+
+  if (!chartData) {
+    return <p>Cargando datos...</p>;
+  }
+
+  return (
+    <div>
+      <Bar
+        data={chartData}
+        options={{
+          responsive: true,
+          plugins: {
+            legend: { position: "top" },
+            title: { display: true, text: "Porcentaje de Actividades Completadas Manualmente" },
+          },
+        }}
+      />
+      {predictedPercentage && (
+        <div style={{ marginTop: "20px", fontSize: "16px" }}>
+          <p>
+            <strong>Predicción:</strong> Se espera que el porcentaje de actividades completadas
+            manualmente sea aproximadamente{" "}
+            <strong className="text-2xl text-green-600 font-bold">
+              {predictedPercentage}%
+            </strong>
+            .
+          </p>
+          <p>
+            <strong>Fórmula de regresión lineal:</strong> <code>{regressionFormula}</code>
+          </p>
+          <p>
+            <strong>Explicación:</strong> La regresión lineal utiliza los porcentajes de actividades
+            completadas manualmente como eje Y y los días como eje X para ajustar una recta que
+            represente la tendencia de los datos. La fórmula <code>y = mx + b</code> permite calcular
+            el porcentaje esperado de actividades en el siguiente día.
+          </p>
+        </div>
+      )}
+    </div>
+  );
+};
+
 
 function ViewHistory() {
   return <ContentLA child={<ActivityChart />} />;
