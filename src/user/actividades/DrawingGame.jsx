@@ -1,19 +1,43 @@
 import React, { useState, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { UpdateScoreEndpoint } from '../../utils/EndpointExporter';
+import { useAuth } from "../../context/AuthContext";
+
 
 const DrawingGame = () => {
   const canvasRef = useRef(null);
   const [isDrawing, setIsDrawing] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(10); // Tiempo para dibujar
-  const [shapes, setShapes] = useState([
-    'Círculo', 'Cuadrado', 'Triángulo', 'Rectángulo', 'Línea', 'Pentágono'
-  ]); // Figuras geométricas
+  const [timeLeft, setTimeLeft] = useState(10);
+  const [shapes, setShapes] = useState(['Círculo', 'Cuadrado', 'Triángulo', 'Rectángulo', 'Línea', 'Pentágono']);
   const [currentShape, setCurrentShape] = useState('');
   const [score, setScore] = useState(0);
   const [gameOver, setGameOver] = useState(false);
   const [gameStarted, setGameStarted] = useState(false);
   const [intervalId, setIntervalId] = useState(null);
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const name = user?.name
 
-  // Iniciar el juego
+  const saveScore = async (newScore) => {
+    const token = localStorage.getItem('userToken');
+    try {
+      const response = await fetch(`${UpdateScoreEndpoint}?token=${token}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          score: newScore,
+          id_activity: 4,
+          username: name,
+        }),
+      });
+      const result = await response.json();
+    } catch (error) {
+      console.error('Error saving score:', error);
+    }
+  };
+
   const startGame = () => {
     setScore(0);
     setTimeLeft(10);
@@ -32,14 +56,13 @@ const DrawingGame = () => {
     }, 1000));
   };
 
-  // Terminar el juego
   const endGame = () => {
     setGameStarted(false);
     setGameOver(true);
     clearInterval(intervalId);
+    saveScore(score);
   };
 
-  // Manejar el inicio del dibujo
   const startDrawing = (e) => {
     if (!gameStarted) return;
     setIsDrawing(true);
@@ -51,7 +74,6 @@ const DrawingGame = () => {
     ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
   };
 
-  // Manejar el dibujo
   const draw = (e) => {
     if (!isDrawing || !gameStarted) return;
     const canvas = canvasRef.current;
@@ -61,7 +83,6 @@ const DrawingGame = () => {
     ctx.stroke();
   };
 
-  // Terminar el dibujo
   const stopDrawing = () => {
     if (!isDrawing || !gameStarted) return;
     setIsDrawing(false);
@@ -69,17 +90,51 @@ const DrawingGame = () => {
     const ctx = canvas.getContext('2d');
     ctx.stroke();
     ctx.closePath();
-    checkDrawing(); // Comprobar si el dibujo es correcto
+    checkDrawing();
   };
 
-  // Comprobar si el dibujo es correcto (simulación)
+  const showCustomAlert = (message) => {
+  
+    const alertContainer = document.createElement('div');
+    alertContainer.style.position = 'fixed';
+    alertContainer.style.top = '50%';
+    alertContainer.style.left = '50%';
+    alertContainer.style.transform = 'translate(-50%, -50%)';
+    alertContainer.style.backgroundColor = '#3D5473'; // Fondo del contenedor
+    alertContainer.style.color = '#FFFFFF'; // Texto del mensaje
+    alertContainer.style.padding = '20px';
+    alertContainer.style.borderRadius = '8px';
+    alertContainer.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.2)';
+    alertContainer.style.zIndex = '1000';
+    alertContainer.style.textAlign = 'center';
+  
+    const messageElement = document.createElement('p');
+    messageElement.textContent = message;
+  
+    const closeButton = document.createElement('button');
+    closeButton.textContent = 'Cerrar';
+    closeButton.style.marginTop = '10px';
+    closeButton.style.padding = '8px 16px';
+    closeButton.style.backgroundColor = '#8BADD9'; // Fondo del botón
+    closeButton.style.color = '#1D2C40'; // Texto del botón
+    closeButton.style.border = 'none';
+    closeButton.style.borderRadius = '4px';
+    closeButton.style.cursor = 'pointer';
+  
+    closeButton.onclick = () => {
+      document.body.removeChild(alertContainer);
+    };
+  
+    alertContainer.appendChild(messageElement);
+    alertContainer.appendChild(closeButton);
+    document.body.appendChild(alertContainer);
+  };
   const checkDrawing = () => {
     let correctDrawing = false;
 
-    // Lógica básica para cada figura geométrica (esto se puede mejorar)
     switch (currentShape) {
       case 'Círculo':
-        correctDrawing = Math.random() < 0.8; // Simulación
+        correctDrawing = Math.random() < 0.8;
         break;
       case 'Cuadrado':
         correctDrawing = Math.random() < 0.7;
@@ -105,16 +160,22 @@ const DrawingGame = () => {
       setCurrentShape(shapes[Math.floor(Math.random() * shapes.length)]);
       setTimeLeft(10);
     } else {
-      alert(`¡Incorrecto! Debías dibujar un ${currentShape}.`);
+      showCustomAlert(`¡Incorrecto! Debías dibujar un ${currentShape}.`);
       endGame();
     }
   };
 
-  // Reiniciar el juego
   const resetGame = () => {
     setScore(0);
     setGameOver(false);
     clearInterval(intervalId);
+    saveScore(score);
+    setScore(0);
+  };
+
+  const goToActivities = () => {
+    saveScore(score);
+    navigate('/activities');
   };
 
   return (
@@ -146,6 +207,12 @@ const DrawingGame = () => {
         </div>
       )}
       <p className="mt-4">Tiempo restante: {timeLeft}s</p>
+      <button
+        className="mt-4 bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-400"
+        onClick={goToActivities}
+      >
+        Atrás
+      </button>
     </div>
   );
 };

@@ -14,7 +14,7 @@ export default function DropDownMenu({ options }) {
   const navigate = useNavigate();
   const {logout } = useAuth();
   return (
-    <div className="relative inline-block text-left">
+    <div className="relative inline-block text-left z-10">
       {/* Botón del Dropdown */}
       <button
         onClick={toggleDropdown}

@@ -4,12 +4,12 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 const menuOps = [
-  { icon: Games, menuOption: "Games", pageRef: "/actividades/Actividades" },
+  { icon: Games, menuOption: "Games", pageRef: "/activities" },
   { icon: News, menuOption: "Schedule", pageRef: "/schedule" },
   { icon: User, menuOption: "Profile", pageRef: "/profile" },
-  { icon: Records, menuOption: "Records", pageRef: "/profile" },
+  { icon: Records, menuOption: "Records", pageRef: "/records" },
+  { icon: Suscription, menuOption: "Suscription", pageRef: "/subscription" },
   { icon: History, menuOption: "History", pageRef: "/history" },
-  { icon: Suscription, menuOption: "Suscription", pageRef: "/profile" },
 ];
 
 export default function AsideMenuU({ options = menuOps }) {
