@@ -27,6 +27,7 @@ import History from "./user/History"
 import ViewGraphRecords from "./user/GraphRecords.jsx";
 import Failure from "./user/Failure"
 import Pending from "./user/Pending"
+import Confirmation from "./pages/Confirmation.jsx";
 
 
 // src/App.jsx
@@ -39,6 +40,7 @@ function App() {
       <Router>
         <Routes>
           <Route path="/" element={<MainPageL />} />
+          <Route path="/confirmation" element={<Confirmation />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/news" element={<News />} />

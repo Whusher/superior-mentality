@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { EyeIcon, EyeOffIcon, CheckIcon, XIcon } from "../utils/SVGExporter";
 import { useNavigate } from 'react-router-dom';
 import { AuthEndpoint } from '../utils/EndpointExporter';
+import { toast } from 'react-toastify';
 
 export default function SignUp() {
   const navigate = useNavigate();
@@ -55,13 +56,13 @@ export default function SignUp() {
         body: JSON.stringify(form),
       });
       if (res.ok) {
-        alert('Registered Successfully');
+        toast.success('Please verify your email address')
         navigate('/login');
       } else {
-        alert('An error has occurred');
+        toast.error('An error has occurred');
       }
     } catch (e) {
-      alert('Error: could not register. Check your credentials.');
+      toast.error('Error: could not register. Check your credentials.');
       console.log(e);
     }
   };

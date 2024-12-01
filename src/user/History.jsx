@@ -132,6 +132,8 @@ const ActivityChart = () => {
       <div className="md:w-[900px]  w-[400px] mt-7 p-4">
         <h2>Activities Closed vs Incomplete</h2>
         <ActivityComparisonChart startDate={startDate} endDate={endDate} data={dataCopy} />
+      </div>
+      <div className="md:w-[900px] w-[400px] mt-7 p-4">
         <ExpectedRatio startDate={startDate} endDate={endDate} data={dataCopy} />
       </div>
     </div>
