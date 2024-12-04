@@ -216,46 +216,49 @@ function Schedule() {
 
   useEffect(() => {
     const fetchActivitiesByDay = async (date) => {
-      const loadingToastId = toast.loading("Loading activities...");
-      try{
-        const formattedDate = formatDateForBackend(date);
-        console.log(`Fetching activities for date: ${formattedDate}`);
-
-        const response = await fetch(`${ActivitiesEndpoint}/activities-by-day?date=${formattedDate}`, {
-            method: "GET",
-            headers: {
-                Authorization: `Bearer ${localStorage.getItem("userToken")}`,
-            },
-        });
-
-        const data = await response.json();
-        if(data[0] !==null){
-          setCurrentActivitiesDay(data);
-          toast.update(loadingToastId, {
-            render: "Activities loaded successfully!",
-            type: "success",
-            isLoading: false,
-            autoClose: 3000,
+      if(date){
+        const loadingToastId = toast.loading("Loading activities...");
+        try{
+          const formattedDate = formatDateForBackend(date);
+          console.log(`Fetching activities for date: ${formattedDate}`);
+  
+          const response = await fetch(`${ActivitiesEndpoint}/activities-by-day?date=${formattedDate}`, {
+              method: "GET",
+              headers: {
+                  Authorization: `Bearer ${localStorage.getItem("userToken")}`,
+              },
           });
+  
+          const data = await response.json();
+          if(data[0] !==null){
+            console.log(data)
+            setCurrentActivitiesDay(data);
+            toast.update(loadingToastId, {
+              render: "Activities loaded successfully!",
+              type: "success",
+              isLoading: false,
+              autoClose: 3000,
+            });
+          }
+          else{
+            toast.update(loadingToastId, {
+              render: "No activities found for this date.",
+              type: "info",
+              isLoading: false,
+              autoClose: 3000,
+            });
+            setCurrentActivitiesDay(null)
+          }
+          console.log(data);
+        }catch(e){
+          console.log(e)
+          // toast.update(loadingToastId, {
+          //   render: "Error loading activities.",
+          //   type: "error",
+          //   isLoading: false,
+          //   autoClose: 3000,
+          // });
         }
-        else{
-          toast.update(loadingToastId, {
-            render: "No activities found for this date.",
-            type: "info",
-            isLoading: false,
-            autoClose: 3000,
-          });
-          setCurrentActivitiesDay(null)
-        }
-        console.log(data);
-      }catch(e){
-        console.log(e)
-        // toast.update(loadingToastId, {
-        //   render: "Error loading activities.",
-        //   type: "error",
-        //   isLoading: false,
-        //   autoClose: 3000,
-        // });
       }
     };
 
