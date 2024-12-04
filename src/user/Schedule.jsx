@@ -17,6 +17,7 @@ const formatCalendarDate = (date) => {
 
 function Schedule() {
   const [selectedDate, setSelectedDate] = useState(null);
+  const [loading, setLoading] = useState(false);
   const [recording, setRecording] = useState(false);
   const [audioBlob, setAudioBlob] = useState(null);
   const [activity, setActivity] = useState("");
@@ -169,7 +170,8 @@ function Schedule() {
       if (response.ok) {
         const data = await response.json();
         console.log(data.message);
-        alert("Agenda completed successfully!");
+        toast.success("Agenda completed successfully!");
+        setCurrentActivitiesDay(null)
       } else {
         console.error("Failed to finish day.");
       }
@@ -179,26 +181,107 @@ function Schedule() {
   };
 
 
+//   useEffect(() => {
+//     const fetchActivities = async () => {
+//       try {
+//         const res = await fetch(`${ActivitiesEndpoint}/getActivitiesBySchedule`, {
+//           method: "GET",
+//           headers: {
+//             "Content-Type": "application/json",
+//             Authorization: `Bearer ${localStorage.getItem("userToken")}`,
+//           },
+//         });
+//         const data = await res.json();
+//         console.log(data);
+//         setCurrentActivitiesDay(data);
+//         const fetchActivitiesByDay = async (date) => {
+//     const response = await fetch(`/api/activities-by-day?date=${date}`, {
+//         method: "GET",
+//         headers: {
+//             Authorization: `Bearer ${token}` // Si usas autenticación
+//         }
+//     });
+//     const data = await response.json();
+//     return data;
+// };
+
+//       } catch (e) {
+//         console.log(e);
+//         toast.error("Activities Service not available");
+//       }
+//     };
+//     fetchActivities(); 
+
+//   }, [updater]);
+
   useEffect(() => {
-    const fetchActivities = async () => {
-      try {
-        const res = await fetch(`${ActivitiesEndpoint}/getActivitiesBySchedule`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("userToken")}`,
-          },
+    const fetchActivitiesByDay = async (date) => {
+      const loadingToastId = toast.loading("Loading activities...");
+      try{
+        const formattedDate = formatDateForBackend(date);
+        console.log(`Fetching activities for date: ${formattedDate}`);
+
+        const response = await fetch(`${ActivitiesEndpoint}/activities-by-day?date=${formattedDate}`, {
+            method: "GET",
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("userToken")}`,
+            },
         });
-        const data = await res.json();
+
+        const data = await response.json();
+        if(data[0] !==null){
+          setCurrentActivitiesDay(data);
+          toast.update(loadingToastId, {
+            render: "Activities loaded successfully!",
+            type: "success",
+            isLoading: false,
+            autoClose: 3000,
+          });
+        }
+        else{
+          toast.update(loadingToastId, {
+            render: "No activities found for this date.",
+            type: "info",
+            isLoading: false,
+            autoClose: 3000,
+          });
+          setCurrentActivitiesDay(null)
+        }
         console.log(data);
-        setCurrentActivitiesDay(data);
-      } catch (e) {
-        console.log(e);
-        toast.error("Activities Service not available");
+      }catch(e){
+        console.log(e)
+        // toast.update(loadingToastId, {
+        //   render: "Error loading activities.",
+        //   type: "error",
+        //   isLoading: false,
+        //   autoClose: 3000,
+        // });
       }
     };
-    fetchActivities();
-  }, [updater]);
+
+    const formatDateForBackend = (date) => {
+      let newSelectedDate = new Date(
+        Date.UTC(
+          date.getUTCFullYear(),
+          date.getUTCMonth(),
+          date.getUTCDate()
+        )
+      );
+      let [year, month, day] = newSelectedDate
+                        .toISOString()
+                        .slice(0, 10)
+                        .split("-");
+
+      // let selectedDateFormatted = `${year}-${day}-${month}`; // Formato YYYY-MM-DD
+      //   const jsDate = new Date(date);
+      //   const year = jsDate.getFullYear();
+      //   const day = String(jsDate.getDate()).padStart(2, "0");
+      //   const month = String(jsDate.getMonth() + 1).padStart(2, "0");
+        return `${year}-${day}-${month}`; // Formato: YYYY-DD-MM
+    };
+
+    fetchActivitiesByDay(selectedDate);
+}, [updater,selectedDate]);
 
   return (
     <div className="flex flex-col w-full mx-auto p-6 bg-minimal rounded-md">
@@ -251,64 +334,6 @@ function Schedule() {
               <tbody className="bg-minimal rounded-md">
                 {selectedDate &&
                   currentActivitiesDay
-                    .filter((act) => {
-                      let actDate = new Date(act.DateAgenda); // Convertimos el string a un objeto Date
-                      // Asegúrate de usar la zona horaria UTC para la fecha de la base de datos
-                      let actDateUTC = new Date(
-                        Date.UTC(
-                          actDate.getUTCFullYear(),
-                          actDate.getUTCMonth(),
-                          actDate.getUTCDate()
-                        )
-                      );
-                      actDateUTC = actDateUTC.toISOString();
-                      //  console.log(actDateUTC)
-                      //  console.log(actDateUTC.slice(0,4))//ANIO
-                      //  console.log(actDateUTC.slice(5,7))//MES correcto
-                      //  console.log(actDateUTC.slice(8,10))//DIA
-                      //YA ES OK LA FECHA DE LA ACTIVIDAD
-
-                      //HACER OK La fecha de selected date
-                      let newSelectedDate = new Date(
-                        Date.UTC(
-                          selectedDate.getUTCFullYear(),
-                          selectedDate.getUTCMonth(),
-                          selectedDate.getUTCDate()
-                        )
-                      );
-                      //  console.log( newSelectedDate)
-                      //  console.log( newSelectedDate.getFullYear()) //ANIO
-                      //  console.log('MONTH SELECT', newSelectedDate.getUTCMonth()+1) //Te da el mes 0 es enero
-                      //  console.log( newSelectedDate.getDate())
-
-                      // Verifica que sea una fecha válida
-                      // if (isNaN(actDateUTC)) return false;
-
-                      // Obtiene solo la parte de año, mes y día de la fecha seleccionada
-
-                      // Extraemos las partes de año, mes y día de ambas fechas
-                      // let actDateFormatted = actDateUTC.slice(0, 10); // Formato YYYY-MM-DD
-                      let [year, month, day] = newSelectedDate
-                        .toISOString()
-                        .slice(0, 10)
-                        .split("-");
-                      let selectedDateFormatted = `${year}-${day}-${month}`; // Formato YYYY-MM-DD
-                      let textSelectedDate = `${actDateUTC.slice(
-                        0,
-                        4
-                      )}-${actDateUTC.slice(5, 7)}-${actDateUTC.slice(8, 10)}`;
-                      console.log('Act Date Formatted:', textSelectedDate);
-                      console.log('Selected Date Formatted:', selectedDateFormatted);
-
-                      // // Comparar solo la parte de la fecha (YYYY-MM-DD)
-                      // if (textSelectedDate === selectedDateFormatted) {
-                      //     console.log("Las fechas coinciden.");
-                      // } else {
-                      //     console.log("Las fechas no coinciden.");
-                      // }
-
-                      return textSelectedDate == selectedDateFormatted;
-                    })
                     .map((obj, idx) => (
                       <tr key={idx} className="border-4  border-opac p-4">
                         {obj.ActivityAudioURL ? (
@@ -456,9 +481,9 @@ function Schedule() {
               <></>
             )}
           </div>
-          <button className="bg-red-500 m-5 text-white rounded-2xl w-1/2 mx-auto p-2" onClick={()=>finishDay(currentActivitiesDay[0].AgendaId)}>
+          {/* <button className="bg-red-500 m-5 text-white rounded-2xl w-1/2 mx-auto p-2" onClick={()=>finishDay(currentActivitiesDay[0].AgendaId)}>
             Finish day
-          </button>
+          </button> */}
         </div>
       )}
       <p className="font-medium text-gray-600 font-sans">

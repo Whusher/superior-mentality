@@ -34,6 +34,8 @@ export default function DropDownMenu({ options }) {
               </Link>
             </li>
           ))}
+          {
+            localStorage.getItem("userToken")&&
           <li
             className="cursor-pointer mx-auto p-3 text-red-600 font-semibold font-sans text-lg w-36 rounded-xl hover:bg-plus-min flex justify-center items-center"
             onClick={async () => {
@@ -44,6 +46,7 @@ export default function DropDownMenu({ options }) {
             <span className="mx-2 text-black  ">Logout</span>
             {XIcon()}
           </li>
+          }
         </ul>
       )}
     </div>
