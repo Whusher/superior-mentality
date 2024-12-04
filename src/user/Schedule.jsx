@@ -292,7 +292,7 @@ function Schedule() {
                         .toISOString()
                         .slice(0, 10)
                         .split("-");
-                      let selectedDateFormatted = `${year}-${month}-${day }`; // Formato YYYY-MM-DD
+                      let selectedDateFormatted = `${year}-${day}-${month}`; // Formato YYYY-MM-DD
                       let textSelectedDate = `${actDateUTC.slice(
                         0,
                         4

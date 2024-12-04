@@ -1,6 +1,6 @@
 // PRODUCTION 
-export const AuthEndpoint = 'https://users-managment-one.vercel.app/user';
-export const ResetEndpoint = 'https://users-managment-one.vercel.app'
+export const AuthEndpoint = 'https://users-managment-whusher-whushers-projects.vercel.app/user';
+export const ResetEndpoint = 'https://users-managment-whusher-whushers-projects.vercel.app/'
 
 //LOCAL
 
@@ -20,7 +20,7 @@ export const UpdateScoreEndpoint = `https://behavior-angelito-alit-angelito-alit
 export const TopActivitiesEndpoint = `https://behavior-angelito-alit-angelito-alits-projects.vercel.app/top-activities`;
 export const GraphRecordsEndpoint = `https://behavior-angelito-alit-angelito-alits-projects.vercel.app/activities-scores-graph`;
 
-export const ActivitiesEndpoint = 'https://activity-services-whusher-whushers-projects.vercel.app/activities'
-// export const ActivitiesEndpoint = 'http://localhost:4321/activities'
+// export const ActivitiesEndpoint = 'https://activity-services-whusher-whushers-projects.vercel.app/activities'
+export const ActivitiesEndpoint = 'http://localhost:4321/activities'
 // export const AuthEndpoint = 'http://localhost:1234/user';
 // export const ResetEndpoint = 'http://localhost:1234'
