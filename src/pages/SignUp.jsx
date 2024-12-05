@@ -1,15 +1,20 @@
-import { useState } from 'react';
+import { useState } from "react";
 import { EyeIcon, EyeOffIcon, CheckIcon, XIcon } from "../utils/SVGExporter";
-import { useNavigate } from 'react-router-dom';
-import { AuthEndpoint } from '../utils/EndpointExporter';
-import { toast } from 'react-toastify';
+import { useNavigate } from "react-router-dom";
+import { AuthEndpoint } from "../utils/EndpointExporter";
+import { toast } from "react-toastify";
 
 export default function SignUp() {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [form, setForm] = useState({name: '', lastName: '', email: '', password: ''});
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [form, setForm] = useState({
+    name: "",
+    lastName: "",
+    email: "",
+    password: "",
+  });
   const [acceptedPrivacy, setAcceptedPrivacy] = useState(false); // Estado para el checkbox
   const [showModal, setShowModal] = useState(false); // Estado para controlar el modal
 
@@ -22,24 +27,38 @@ export default function SignUp() {
     const hasNumber = /\d/.test(password);
     const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
 
-    const strength = [minLength, hasUppercase, hasLowercase, hasNumber, hasSpecialChar].filter(Boolean).length;
+    const strength = [
+      minLength,
+      hasUppercase,
+      hasLowercase,
+      hasNumber,
+      hasSpecialChar,
+    ].filter(Boolean).length;
     return strength;
-  }
+  };
 
   const renderPasswordStrength = () => {
     const strength = passwordStrength(password);
-    const colors = ['bg-red-500', 'bg-orange-500', 'bg-yellow-500', 'bg-green-500', 'bg-green-600'];
+    const colors = [
+      "bg-red-500",
+      "bg-orange-500",
+      "bg-yellow-500",
+      "bg-green-500",
+      "bg-green-600",
+    ];
     return (
       <div className="flex mt-2">
         {[1, 2, 3, 4, 5].map((level) => (
           <div
             key={level}
-            className={`h-2 w-1/5 ${strength >= level ? colors[strength - 1] : 'bg-gray-300'}`}
+            className={`h-2 w-1/5 ${
+              strength >= level ? colors[strength - 1] : "bg-gray-300"
+            }`}
           />
         ))}
       </div>
     );
-  }
+  };
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -49,20 +68,20 @@ export default function SignUp() {
     e.preventDefault();
     try {
       const res = await fetch(`${AuthEndpoint}/sign-up`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(form),
       });
       if (res.ok) {
-        toast.success('Please verify your email address')
-        navigate('/login');
+        toast.success("Please verify your email address");
+        navigate("/login");
       } else {
-        toast.error('An error has occurred');
+        toast.error("An error has occurred");
       }
     } catch (e) {
-      toast.error('Error: could not register. Check your credentials.');
+      toast.error("Error: could not register. Check your credentials.");
       console.log(e);
     }
   };
@@ -74,10 +93,15 @@ export default function SignUp() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#BDD9F2]">
       <div className="bg-white p-8 rounded-lg shadow-md w-96">
-        <h1 className="text-2xl font-bold mb-6 text-center text-[#1D2C40]">Sign Up</h1>
+        <h1 className="text-2xl font-bold mb-6 text-center text-[#1D2C40]">
+          Sign Up
+        </h1>
         <form className="space-y-4" onSubmit={handleSubmit}>
           <div>
-            <label htmlFor="name" className="block text-sm font-medium text-[#3D5473]">
+            <label
+              htmlFor="name"
+              className="block text-sm font-medium text-[#3D5473]"
+            >
               Name
             </label>
             <input
@@ -91,7 +115,10 @@ export default function SignUp() {
             />
           </div>
           <div>
-            <label htmlFor="lastName" className="block text-sm font-medium text-[#3D5473]">
+            <label
+              htmlFor="lastName"
+              className="block text-sm font-medium text-[#3D5473]"
+            >
               Last Name
             </label>
             <input
@@ -105,7 +132,10 @@ export default function SignUp() {
             />
           </div>
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-[#3D5473]">
+            <label
+              htmlFor="email"
+              className="block text-sm font-medium text-[#3D5473]"
+            >
               Email
             </label>
             <input
@@ -119,12 +149,15 @@ export default function SignUp() {
             />
           </div>
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-[#3D5473]">
+            <label
+              htmlFor="password"
+              className="block text-sm font-medium text-[#3D5473]"
+            >
               Password
             </label>
             <div className="relative mt-1">
               <input
-                type={showPassword ? 'text' : 'password'}
+                type={showPassword ? "text" : "password"}
                 id="password"
                 name="password"
                 required
@@ -151,12 +184,15 @@ export default function SignUp() {
             {renderPasswordStrength()}
           </div>
           <div>
-            <label htmlFor="confirmPassword" className="block text-sm font-medium text-[#3D5473]">
+            <label
+              htmlFor="confirmPassword"
+              className="block text-sm font-medium text-[#3D5473]"
+            >
               Confirm Password
             </label>
             <div className="relative mt-1">
               <input
-                type={showPassword ? 'text' : 'password'}
+                type={showPassword ? "text" : "password"}
                 id="confirmPassword"
                 name="confirmPassword"
                 required
@@ -168,9 +204,15 @@ export default function SignUp() {
               {password && confirmPassword && (
                 <span className="absolute inset-y-0 right-0 pr-3 flex items-center">
                   {password === confirmPassword ? (
-                    <CheckIcon className="h-5 w-5 text-green-500" aria-hidden="true" />
+                    <CheckIcon
+                      className="h-5 w-5 text-green-500"
+                      aria-hidden="true"
+                    />
                   ) : (
-                    <XIcon className="h-5 w-5 text-red-500" aria-hidden="true" />
+                    <XIcon
+                      className="h-5 w-5 text-red-500"
+                      aria-hidden="true"
+                    />
                   )}
                 </span>
               )}
@@ -185,10 +227,15 @@ export default function SignUp() {
                 className="form-checkbox text-[#3D5473] h-4 w-4"
               />
               <span className="ml-2 text-sm text-[#3D5473]">
-                I accept the{' '}
-                <button type="button" onClick={openModal} className="text-[#1D2C40] underline">
+                I accept the{" "}
+                <button
+                  type="button"
+                  onClick={openModal}
+                  className="text-[#1D2C40] underline"
+                >
                   privacy policy
-                </button>.
+                </button>
+                .
               </span>
             </label>
           </div>
@@ -198,8 +245,8 @@ export default function SignUp() {
               disabled={password !== confirmPassword || !acceptedPrivacy}
               className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white ${
                 password === confirmPassword && acceptedPrivacy
-                  ? 'bg-[#3D5473] hover:bg-[#2B3C55]'
-                  : 'bg-gray-400 cursor-not-allowed'
+                  ? "bg-[#3D5473] hover:bg-[#2B3C55]"
+                  : "bg-gray-400 cursor-not-allowed"
               }`}
             >
               Sign Up
@@ -208,98 +255,251 @@ export default function SignUp() {
         </form>
 
         {/* Modal */}
-          {showModal && (
-            <div className="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-75">
-              <div className="bg-white p-6 rounded-lg w-96 max-w-full overflow-auto max-h-[80vh]">
-                <h2 className="text-xl font-semibold mb-4 text-center">AVISO DE PRIVACIDAD</h2>
-                <p><strong>(Conforme a la normativa ISO 27001)</strong></p>
-                <p>
-                  El presente Aviso de Privacidad tiene como objetivo informar a nuestros usuarios sobre el tratamiento, protección y manejo de los datos personales proporcionados durante el uso de nuestra aplicación. Este documento cumple con las mejores prácticas de seguridad y gestión de información conforme a la normativa ISO 27001, garantizando la integridad, confidencialidad y disponibilidad de los datos personales.
+        {showModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+            <div className="bg-white rounded-lg shadow-lg overflow-y-auto max-h-screen w-11/12 md:w-3/4 lg:w-1/2 px-6 py-10">
+              <header className="mb-8">
+                <h1 className="text-3xl font-bold text-blue-700 text-center">
+                  Política de Privacidad y Protección de Datos Personales
+                </h1>
+                <p className="text-lg mt-2">
+                  Superior Mentality - Agenda Interactiva para Personas con TDAH
                 </p>
-                <p><strong>2. Datos Personales Tratados</strong></p>
-                <p>
-                  Recolectamos y utilizamos los siguientes datos personales con el propósito de brindar un servicio seguro, eficiente y personalizado:
+                <p className="text-sm text-gray-600">
+                  Última actualización: 04 de Diciembre 2024 a las 4:32 p.m
+                  horas
                 </p>
-                <ul>
-                  <li>Nombre completo.</li>
-                  <li>Correo electrónico.</li>
+              </header>
+              <section class="mb-10">
+                <h2 class="text-xl font-semibold text-blue-600">
+                  1. Responsable de los Datos Personales
+                </h2>
+                <p class="mt-2">
+                  Superior Mentality, con domicilio en{" "}
+                  <span class="italic">
+                    Avenida Pie de la Cuesta 2600, 76140 Santiago de Querétaro,
+                  </span>
+                  , es responsable del tratamiento de sus datos personales y de
+                  su protección.
+                </p>
+              </section>
+              <section class="mb-10">
+                <h2 class="text-xl font-semibold text-blue-600">
+                  2. Datos Personales que Recolectamos
+                </h2>
+                <p class="mt-2">
+                  Los datos personales que recolectamos de nuestros usuarios
+                  son:
+                </p>
+                <ul class="list-disc pl-6 mt-2">
+                  <li>Nombre completo</li>
+                  <li>Dirección de correo electrónico</li>
+                  <li>Dirección IP</li>
+                  <li>Datos de seguimiento de usuario</li>
                 </ul>
-                <p>
-                  Estos datos son tratados con estricta confidencialidad y sólo para los fines descritos en este documento.
+              </section>
+              <section class="mb-10">
+                <h2 class="text-xl font-semibold text-blue-600">
+                  3. Finalidades del Tratamiento de Datos
+                </h2>
+                <p class="mt-2">
+                  Sus datos personales serán utilizados para las siguientes
+                  finalidades:
                 </p>
-                <p><strong>3. Protección de Datos Personales</strong></p>
-                <p><strong>3.1 Medidas de seguridad</strong></p>
-                <p>
-                  Nos comprometemos a proteger los datos personales utilizando medidas técnicas y organizativas alineadas con la norma ISO 27001. Estas incluyen:
-                </p>
-                <ul>
-                  <li>Cifrado de contraseñas. Utilizamos el algoritmo Bcrypt con un round de 10 vueltas para garantizar la seguridad del hash de las contraseñas. Este enfoque hace extremadamente difícil que terceros no autorizados puedan romper el cifrado.</li>
-                  <li>Control de acceso. Limitamos el acceso a los datos personales a personal autorizado, garantizando que sólo aquellos que necesiten la información para llevar a cabo sus funciones puedan acceder a ella.</li>
+                <h3 class="font-semibold text-blue-500 mt-4">
+                  Finalidades Primarias:
+                </h3>
+                <ul class="list-disc pl-6 mt-2">
+                  <li>Crear y gestionar su cuenta de usuario</li>
+                  <li>Proporcionar los servicios solicitados</li>
+                  <li>Procesar sus solicitudes y consultas</li>
+                  <li>Enviar comunicaciones relacionadas con el servicio</li>
+                  <li>Mejorar la experiencia del usuario</li>
+                  <li>Garantizar la seguridad de la plataforma</li>
                 </ul>
-                <p><strong>3.2 Protección de la ubicación aproximada</strong></p>
-                <p>
-                  La ubicación aproximada proporcionada por el usuario es almacenada y tratada con fines estadísticos y operativos, asegurando que los datos no permitan la identificación exacta de un usuario.
-                </p>
-                <p><strong>4. Uso de Datos y Métricas</strong></p>
-                <p>
-                  Con el fin de mejorar continuamente nuestro servicio y ofrecer una experiencia optimizada, utilizamos las métricas relacionadas con el uso de la aplicación, incluyendo:
-                </p>
-                <ul>
-                  <li>Tiempo de uso y frecuencia de acceso.</li>
-                  <li>Opiniones proporcionadas por los usuarios.</li>
+                <h3 class="font-semibold text-blue-500 mt-4">
+                  Finalidades Secundarias:
+                </h3>
+                <ul class="list-disc pl-6 mt-2">
+                  <li>Enviar información sobre actualizaciones del servicio</li>
+                  <li>Realizar análisis estadísticos</li>
+                  <li>
+                    Enviar comunicaciones promocionales (con previo
+                    consentimiento)
+                  </li>
                 </ul>
-                <p>
-                  Estos datos serán tratados de forma agregada y anónima siempre que sea posible, respetando la privacidad de nuestros usuarios.
+              </section>
+              <section class="mb-10">
+                <h2 class="text-xl font-semibold text-blue-600">
+                  4. Medidas de Seguridad
+                </h2>
+                <p class="mt-2">
+                  Implementamos diversas medidas de seguridad técnicas,
+                  administrativas y físicas para proteger sus datos personales,
+                  incluyendo:
                 </p>
-                <p><strong>5. Manipulación de Datos por Terceros</strong></p>
-                <p>
-                  Para la gestión técnica de nuestra infraestructura y la prestación del servicio, colaboramos con los siguientes proveedores externos:
-                </p>
-                <ul>
-                  <li>HostGator: Gestión de servidores y almacenamiento en la nube.</li>
-                  <li>Vercel: Plataforma de despliegue y operación de aplicaciones.</li>
+                <ul class="list-disc pl-6 mt-2">
+                  <li>Encriptación de datos sensibles</li>
+                  <li>Firewalls y sistemas de seguridad</li>
+                  <li>Acceso restringido a datos personales</li>
+                  <li>Políticas internas de protección de datos:</li>
+                  <ul class="list-decimal pl-8 m-4">
+                    <li>
+                      Clasificación y control de datos personales según su nivel
+                      de sensibilidad.
+                    </li>
+                    <li>
+                      Capacitación periódica del personal sobre manejo seguro de
+                      datos personales.
+                    </li>
+                    <li>
+                      Implementación de autenticación de dos factores (2FA) para
+                      accesos críticos.
+                    </li>
+                    <li>
+                      Establecimiento de plazos de retención y eliminación
+                      segura de datos cuando no sean necesarios.
+                    </li>
+                    <li>
+                      Protocolo de respuesta a incidentes de seguridad,
+                      incluyendo notificaciones a los afectados.
+                    </li>
+                    <li>
+                      Contratos con proveedores que incluyan cláusulas de
+                      privacidad y evaluaciones periódicas.
+                    </li>
+                    <li>
+                      Auditorías regulares de los sistemas que gestionen datos
+                      personales.
+                    </li>
+                    <li>
+                      Limitación de la recopilación de datos personales al
+                      mínimo necesario.
+                    </li>
+                    <li>
+                      Notificación interna sobre cambios en las políticas de
+                      protección de datos.
+                    </li>
+                  </ul>
+                  <li>Capacitación del personal en materia de privacidad</li>
                 </ul>
-                <p>
-                  Ambos proveedores operan bajo estrictos contratos de confidencialidad y alineación con estándares de seguridad. Nos aseguramos de que cumplan con las mejores prácticas y normativas internacionales para proteger los datos personales.
+              </section>
+              <section class="mb-10">
+                <h2 class="text-xl font-semibold text-blue-600">
+                  5. Derechos ARCO
+                </h2>
+                <p class="mt-2">
+                  Como usuario de Superior Mentality, tiene los siguientes
+                  derechos sobre sus datos personales:
                 </p>
-                <p><strong>6. Derechos del Usuario</strong></p>
-                <p>
-                  Los usuarios tienen derecho a:
+                <h3 class="font-semibold text-blue-500 mt-4">
+                  5.1 Derecho de Acceso
+                </h3>
+                <p class="mt-2">
+                  Puede solicitar información sobre qué datos personales tenemos
+                  almacenados, su uso, origen y transferencias realizadas.
                 </p>
-                <ul>
-                  <li>Acceder, rectificar o cancelar sus datos personales en cualquier momento.</li>
-                  <li>Oponerse al uso de sus datos personales para fines no descritos en este aviso.</li>
-                  <li>Solicitar la limitación del tratamiento de sus datos cuando proceda.</li>
-                </ul>
-                <p>
-                  Para ejercer cualquiera de estos derechos, favor de contactarnos a través de nuestro correo electrónico de soporte.
+                <h3 class="font-semibold text-blue-500 mt-4">
+                  5.2 Derecho de Rectificación
+                </h3>
+                <p class="mt-2">
+                  Puede solicitar la corrección de datos desactualizados o
+                  inexactos, y la actualización de su información.
                 </p>
-                <p><strong>7. Actualizaciones del Aviso de Privacidad</strong></p>
-                <p>
-                  Nos reservamos el derecho de actualizar este Aviso de Privacidad para reflejar cambios en nuestras prácticas de tratamiento de datos. En caso de realizar modificaciones significativas, notificaremos a nuestros usuarios a través de los medios de contacto proporcionados.
+                <h3 class="font-semibold text-blue-500 mt-4">
+                  5.3 Derecho de Cancelación
+                </h3>
+                <p class="mt-2">
+                  Solicite la eliminación de sus datos cuando considere que ya
+                  no son necesarios.
                 </p>
-                <p><strong>8. Contacto</strong></p>
-                <p>
-                  Si tiene alguna pregunta sobre este Aviso de Privacidad o desea ejercer alguno de sus derechos, puede comunicarse con nuestro equipo a través de:
+                <p class="mt-2 italic">
+                  Enviar solicitud a:{" "}
+                  <span class="text-blue-600">support@xcodesigma.com</span>
                 </p>
-                <p>
-                  Correo electrónico:
+                <h3 class="font-semibold text-blue-500 mt-4">
+                  5.4 Derecho de Oposición
+                </h3>
+                <p class="mt-2">
+                  Oponerse al tratamiento de sus datos para fines específicos.
                 </p>
-                <p>
-                  Agradecemos su confianza y trabajamos constantemente para garantizar que sus datos estén protegidos conforme a las mejores prácticas internacionales.
+              </section>
+              <section class="mb-10">
+                <h2 class="text-xl font-semibold text-blue-600">
+                  6. Transferencias de Datos
+                </h2>
+                <p class="mt-2">
+                  Sus datos personales pueden ser transferidos a proveedores de
+                  servicios y autoridades competentes con medidas de seguridad
+                  apropiadas.
                 </p>
-                <p><strong>Última actualización:</strong> 15 de noviembre de 2024.</p>
-                <button
-                  onClick={closeModal}
-                  className="mt-4 w-full py-2 px-4 bg-[#3D5473] hover:bg-[#2B3C55] rounded-md text-white"
+                <p className="mt-2 font-bold">
+                  Los provedores actuales se reservan el tratamiento de datos
+                  directamente en su manejo y posesion asegurandose de su uso
+                  bajo la normativa correspondiente
+                </p>
+                <a
+                  href="https://www.hostgator.mx/terminos"
+                  className="text-blue-600 underline block"
                 >
-                  Close
-                </button>
-              </div>
-
+                  Terminos del Servicio
+                </a>
+                <a
+                  href="https://www.hostgator.co/politicas-soporte"
+                  className="text-blue-600 underline block"
+                >
+                  Politicas de Soporte
+                </a>
+              </section>
+              <section class="mb-10">
+                <h2 class="text-xl font-semibold text-blue-600">
+                  7. Uso de Cookies
+                </h2>
+                <p class="mt-2">
+                  Utilizamos cookies para mejorar su experiencia en nuestra
+                  plataforma. Puede configurar su navegador para gestionarlas.
+                </p>
+              </section>
+              <section class="mb-10">
+                <h2 class="text-xl font-semibold text-blue-600">
+                  8. Cambios en la Política de Privacidad
+                </h2>
+                <p class="mt-2">
+                  Nos reservamos el derecho de modificar esta política en
+                  cualquier momento, notificándolo en nuestra plataforma o por
+                  correo electrónico.
+                </p>
+              </section>
+              <section>
+                <h2 class="text-xl font-semibold text-blue-600">9. Contacto</h2>
+                <p class="mt-2">Para dudas, puede contactarnos en:</p>
+                <ul class="list-disc pl-6 mt-2">
+                  <li>
+                    Correo electrónico:{" "}
+                    <span class="text-blue-600">support@xcodesigma.com</span>
+                  </li>
+                  <li>
+                    Teléfono:{" "}
+                    <span class="text-blue-600">+52 442115764157</span>
+                  </li>
+                  <li>
+                    Dirección:{" "}
+                    <span class="italic">
+                      Avenida Pie de la Cuesta 2600, 76140 Santiago de
+                      Querétaro,
+                    </span>
+                  </li>
+                </ul>
+              </section>
+              <button
+                onClick={closeModal}
+                className="mt-4 w-full py-2 px-4 bg-[#3D5473] hover:bg-[#2B3C55] rounded-md text-white"
+              >
+                Close
+              </button>{" "}
             </div>
-          )}
-
+          </div>
+        )}
       </div>
     </div>
   );
